@@ -8,7 +8,7 @@ import com.test.repository.RoleRepository;
 import com.test.repository.UserPasswordRepository;
 import com.test.repository.UserRepository;
 import com.test.repository.UserVsRoleRepository;
-import com.test.security.JwtTokenProvider;
+//import com.test.security.JwtTokenProvider;
 import com.test.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +28,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
 
     private AuthenticationManager authenticationManager;
-    @Autowired
-
-    private JwtTokenProvider jwtTokenProvider;
+    //@Autowired
+    //private JwtTokenProvider jwtTokenProvider;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -62,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         userPassword.setUserID(user);
         user.setUserPasswords(Collections.singleton(userPassword));
 
-        Role userRole = roleRepository.findByRuleName(RoleName.ADMIN)
+        Role userRole = roleRepository.findByRuleName(RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new AuthApiException(HttpStatus.NOT_IMPLEMENTED, "User Role not set."));
         UserVsRole userVsRole = new UserVsRole();
         userVsRole.setRoleID(userRole);
@@ -77,14 +76,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginDto loginDto) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUserNameOrEmail(), loginDto.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        return token;
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+//                loginDto.getUserNameOrEmail(), loginDto.getPassword()));
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        String token = jwtTokenProvider.generateToken(authentication);
+//
+//        return token;
+        return "sd";
     }
 
 }

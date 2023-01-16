@@ -53,6 +53,17 @@ public class Users {
     @OneToMany(mappedBy = "userID")
     private Set<UserVsRole> userVsRoles = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "userID")
+    private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
+
+    public Set<RefreshToken> getRefreshTokens() {
+        return refreshTokens;
+    }
+
+    public void setRefreshTokens(Set<RefreshToken> refreshTokens) {
+        this.refreshTokens = refreshTokens;
+    }
+
     public Users(String fullName, String userName, String email) {
         this.fullName = fullName;
         this.userName = userName;

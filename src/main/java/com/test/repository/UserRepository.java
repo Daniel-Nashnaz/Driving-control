@@ -15,8 +15,8 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
     @Query("select (count(u) > 0) from Users u where upper(u.email) = upper(:email)")
     boolean existsByEmail(String email);
 
-    @Query("SELECT p.email,p.fullName,p.userName FROM Users p WHERE p.id = :i")
-    Optional<Users> findById(int i);
+//    @Query("SELECT p.email,p.fullName,p.userName FROM Users p WHERE p.id = :i")
+//    Optional<Users> findById(int i);
 
     @Query("SELECT new Users(e.email, e.fullName, e.userName) FROM Users e")
     List<Users> findByQuery();
