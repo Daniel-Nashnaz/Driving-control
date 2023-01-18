@@ -12,6 +12,6 @@ public class ApiResponse {
     private Instant timeUtc;
     // private Boolean success;
     private String message;
-    private String details;
+    private String path;
 
 }

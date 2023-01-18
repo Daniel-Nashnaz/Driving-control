@@ -25,9 +25,8 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    @Autowired
-
-    private AuthenticationManager authenticationManager;
+    //@Autowired
+    //private AuthenticationManager authenticationManager;
     //@Autowired
     //private JwtTokenProvider jwtTokenProvider;
     @Autowired
@@ -61,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         userPassword.setUserID(user);
         user.setUserPasswords(Collections.singleton(userPassword));
 
-        Role userRole = roleRepository.findByRuleName(RoleName.ROLE_ADMIN)
+        Role userRole = roleRepository.findByRuleName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new AuthApiException(HttpStatus.NOT_IMPLEMENTED, "User Role not set."));
         UserVsRole userVsRole = new UserVsRole();
         userVsRole.setRoleID(userRole);

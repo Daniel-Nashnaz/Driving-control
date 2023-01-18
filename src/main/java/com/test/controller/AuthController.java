@@ -5,9 +5,9 @@ import com.test.entity.RefreshToken;
 import com.test.entity.Users;
 import com.test.repository.UserRepository;
 import com.test.service.AuthService;
-import com.test.testttt.ser.JwtUtils;
-import com.test.testttt.x.RefreshTokenService;
-import com.test.testttt.x.UserDetailsImpl;
+import com.test.security.jwt.JwtUtils;
+import com.test.security.jwtService.RefreshTokenService;
+import com.test.security.jwtService.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,40 +41,8 @@ public class AuthController {
 
     private final RefreshTokenService refreshTokenService;
 
-
-
-
-    @GetMapping("/v1")
-    public Optional<Users> userList() {
-        return userRepository.findById(3);
-    }
-
-    @GetMapping("/test1")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String testquery() {
-        return userRepository.findByQuery().get(0).toString();
-    }
-
-    /*    @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<JWTAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
-        String token = authService.login(loginDto);
-
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return ResponseEntity.ok(jwtAuthResponse);
-    }*/
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
-//        String token = authService.login(loginDto);
-//
-//        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-//        jwtAuthResponse.setAccessToken(token);
-//
-//
-//        return ResponseEntity.ok(jwtAuthResponse);
-        //return ResponseEntity.ok("finish");
-
+    public ResponseEntity<UserInfoResponse> login(@Valid @RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserNameOrEmail(), loginDto.getPassword()));
 

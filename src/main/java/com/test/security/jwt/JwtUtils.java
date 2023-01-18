@@ -1,11 +1,11 @@
-package com.test.testttt.ser;
+package com.test.security.jwt;
 
 
 import java.util.Date;
 
 
 import com.test.entity.Users;
-import com.test.testttt.x.UserDetailsImpl;
+import com.test.security.jwtService.UserDetailsImpl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -35,12 +35,12 @@ public class JwtUtils {
     private String jwtRefreshCookie;
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        String jwt = generateTokenFromUsername(userPrincipal);
         return generateCookie(jwtCookie, jwt, "/api");
     }
 
     public ResponseCookie generateJwtCookie(Users user) {
-        String jwt = generateTokenFromUsername(user.getUserName());
+        String jwt = generateTokenFromUsername(UserDetailsImpl.build(user));
         return generateCookie(jwtCookie, jwt, "/api");
     }
 
@@ -89,12 +89,26 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) {
-        return Jwts.builder().setSubject(username)
+    public String generateTokenFromUsername(UserDetailsImpl userPrincipal) {
+
+        Claims claims = Jwts.claims().setSubject(userPrincipal.getUsername());
+        //claims.put("username", userPrincipal.getUsername());
+        claims.put("email", userPrincipal.getEmail());
+        claims.put("roles", userPrincipal.getAuthorities());
+
+        return Jwts.builder().setSubject(userPrincipal.getUsername())
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                //.signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
+//        return Jwts.builder().setSubject(username)
+//                .setIssuedAt(new Date())
+//                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+//                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+//                .claim(claims)
+//                .compact();
     }
 
 
