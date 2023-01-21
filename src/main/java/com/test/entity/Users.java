@@ -47,14 +47,40 @@ public class Users {
     @Column(name = "IsDeleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "userID")
+    @OneToMany(mappedBy = "userID",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<UserPassword> userPasswords = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userID")
+    @OneToMany(mappedBy = "userID",fetch = FetchType.LAZY)
     private Set<UserVsRole> userVsRoles = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userID")
+
+
+    @OneToMany(mappedBy = "userID",fetch = FetchType.LAZY)
     private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
+
+
+    @OneToMany(mappedBy ="userID",fetch = FetchType.LAZY)
+    private Set<UserVsAdmin> userVsAdmins = new LinkedHashSet<>();
+
+
+    @OneToMany(mappedBy ="administratorID",fetch = FetchType.LAZY)
+    private Set<UserVsAdmin> adminsVsUser = new LinkedHashSet<>();
+
+    public Set<UserVsAdmin> getAdminsVsUser() {
+        return adminsVsUser;
+    }
+
+    public void setAdminsVsUser(Set<UserVsAdmin> adminsVsUser) {
+        this.adminsVsUser = adminsVsUser;
+    }
+
+    public Set<UserVsAdmin> getUserVsAdmins() {
+        return userVsAdmins;
+    }
+
+    public void setUserVsAdmins(Set<UserVsAdmin> userVsAdmins) {
+        this.userVsAdmins = userVsAdmins;
+    }
 
     public Set<RefreshToken> getRefreshTokens() {
         return refreshTokens;

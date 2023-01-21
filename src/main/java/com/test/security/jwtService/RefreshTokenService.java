@@ -9,28 +9,39 @@ import com.test.entity.RefreshToken;
 import com.test.exception.TokenRefreshException;
 import com.test.repository.RefreshTokenRepository;
 import com.test.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
     @Value("${bezkoder.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
+
 
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserRepository userRepository;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
-    }
+
+    //@Transactional(propagation = Propagation.REQUIRED)
 
     public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+        Optional<RefreshToken> byToken = refreshTokenRepository.findByToken(token);
+
+//        Hibernate.initialize(byToken.get().getUserID());
+//        Hibernate.initialize(byToken.get().getUserID().getUserVsAdmins());
+//        Hibernate.initialize(byToken.get().getUserID().getUserPasswords());
+//        Hibernate.initialize(byToken.get().getUserID().getUserVsRoles());
+//        Hibernate.initialize(byToken.get().getUserID().getAdminsVsUser());
+
+        return byToken;
     }
 
 
@@ -58,4 +69,6 @@ public class RefreshTokenService {
     public Integer deleteByUserId(Integer userId) {
         return refreshTokenRepository.deleteByUserID(userRepository.findById(userId).get());
     }
+
+
 }

@@ -13,6 +13,9 @@ public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
     private Integer id;
 
+    private String fullName;
+
+
     private String username;
 
     private String email;
@@ -21,9 +24,10 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String username, String email, String password,
+    public UserDetailsImpl(Integer id,String fullName, String username, String email, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
+        this.fullName =fullName;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -36,6 +40,7 @@ public class UserDetailsImpl implements UserDetails {
         String pass = user.getUserPasswords().stream().findFirst().get().getPassword();
         return new UserDetailsImpl(
                 user.getId(),
+                user.getFullName(),
                 user.getUserName(),
                 user.getEmail(),
                 pass,
@@ -53,6 +58,33 @@ public class UserDetailsImpl implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

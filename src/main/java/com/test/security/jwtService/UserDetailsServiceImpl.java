@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
-        Users user = userRepository.findByUserNameOrEmail(username,username)
+        Users user = userRepository.findByUserNameAndIsDeletedFalseOrEmailAndIsDeletedFalse(username,username)
                 //.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
                 .orElseThrow(() -> new AuthApiException(HttpStatus.UNAUTHORIZED, "User Not Found with username: " + username));
 

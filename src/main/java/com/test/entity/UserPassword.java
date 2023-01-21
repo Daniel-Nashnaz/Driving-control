@@ -17,7 +17,7 @@ public class UserPassword {
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonBackReference
     @JoinColumn(name = "UserID", nullable = false)
     private Users userID;
