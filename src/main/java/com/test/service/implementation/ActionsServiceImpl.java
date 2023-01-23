@@ -1,60 +1,36 @@
 package com.test.service.implementation;
 
-import com.test.dto.LoginDto;
-import com.test.dto.RegistrationDto;
-import com.test.dto.UpdateUser;
+import com.test.dto.*;
 import com.test.entity.*;
-import com.test.exception.AuthApiException;
 import com.test.repository.*;
-//import com.test.security.JwtTokenProvider;
 import com.test.security.jwt.JwtUtils;
+import com.test.security.jwtService.RefreshTokenService;
 import com.test.security.jwtService.UserDetailsImpl;
-import com.test.service.AuthService;
+import com.test.service.ActionsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
-
-    //private final AuthenticationManager authenticationManager;
+public class ActionsServiceImpl implements ActionsService {
 
     private final JwtUtils jwtUtils;
-
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
-
-
-    private final UserPasswordRepository passwordRepository;
-
-
-    private final UserVsRoleRepository userVsRoleRepository;
-
-
-    private final RoleRepository roleRepository;
     private final UserVsAdminRepository userVsAdminRepository;
+    private final AuthMethods authMethods;
 
 
-    @Override
-    public String registerAdmin(RegistrationDto registrationDto) {
-        register(registrationDto);
-        return "Admin registered successfully!.";
-    }
-
-    @Override
-    public String login(LoginDto loginDto) {
-
-        return "sd";
-    }
 
     @Override
     public String adminAddUser(RegistrationDto registrationDto) {
@@ -62,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserVsAdmin userVsAdmin = new UserVsAdmin();
 
-        userVsAdmin.setUserID(register(registrationDto));
+        userVsAdmin.setUserID(authMethods.register(registrationDto, RoleName.ROLE_USER));
 
         userVsAdmin.setAdministratorID(userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get());
         // try to do
@@ -75,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseCookie updateUser(UpdateUser updateUser) {
-        isNotExsist(updateUser.getUserName(), updateUser.getEmail());
+        authMethods.isNotExsist(updateUser.getUserName(), updateUser.getEmail());
         ResponseCookie jwtCookie = null;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Users userUpdate = userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get();
@@ -84,14 +60,26 @@ public class AuthServiceImpl implements AuthService {
             ((UserDetailsImpl) auth.getPrincipal()).setFullName(updateUser.getFullName());
         }
 
+        if (updateUser.getPhone() != null) {
+            userUpdate.setPhone(updateUser.getPhone());
+            ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateUser.getEmail());
+        }
+
         if (updateUser.getEmail() != null && updateUser.getUserName() != null && updateUser.getPassword() != null) {
+            authMethods.getAllPassAndCheckIfUsedBefore(userUpdate, updateUser.getPassword());
             userUpdate.setEmail(updateUser.getEmail());
             ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateUser.getEmail());
             userUpdate.setUserName(updateUser.getUserName());
             ((UserDetailsImpl) auth.getPrincipal()).setUsername(updateUser.getUserName());
             String pass = passwordEncoder.encode(updateUser.getPassword());
-            userUpdate.getUserPasswords().stream().findFirst().get().setPassword(pass);
+            authMethods.setAllPassNotActive(userUpdate);
+            UserPassword userPassword = new UserPassword();
+            userPassword.setPassword(pass);
+            userPassword.setIsActive(true);
+            userPassword.setUserID(userUpdate);
+            userUpdate.setUserPasswords(Collections.singleton(userPassword));
             ((UserDetailsImpl) auth.getPrincipal()).setPassword(pass);
+            userRepository.save(userUpdate);
             jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
             return jwtCookie;
         }
@@ -107,8 +95,14 @@ public class AuthServiceImpl implements AuthService {
 
         }
         if (updateUser.getPassword() != null) {
+            authMethods.getAllPassAndCheckIfUsedBefore(userUpdate, updateUser.getPassword());
             String pass = passwordEncoder.encode(updateUser.getPassword());
-            userUpdate.getUserPasswords().stream().findFirst().get().setPassword(pass);
+            authMethods.setAllPassNotActive(userUpdate);
+            UserPassword userPassword = new UserPassword();
+            userPassword.setPassword(pass);
+            userPassword.setIsActive(true);
+            userPassword.setUserID(userUpdate);
+            userUpdate.setUserPasswords(Collections.singleton(userPassword));
             ((UserDetailsImpl) auth.getPrincipal()).setPassword(pass);
             jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
         }
@@ -117,50 +111,34 @@ public class AuthServiceImpl implements AuthService {
         return jwtCookie;
     }
 
+
     @Override
-    public String deleteCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<Users> userDelete = userRepository.findById(((UserDetailsImpl)auth.getPrincipal()).getId());
+    public void deleteById(Integer id) {
+        Optional<Users> userDelete = userRepository.findById(id);
         userDelete.get().setIsDeleted(true);
         userDelete.get().getUserPasswords()
                 .stream()
-                .filter(userPassword -> !userPassword.getIsActive())
+                .filter(userPassword -> userPassword.getIsActive())
                 .findFirst()
-                .ifPresent(userPassword -> userPassword.setIsActive(true));
-
-    userRepository.save(userDelete.get());
-    return "User delete successfully!";
+                .ifPresent(userPassword -> userPassword.setIsActive(false));
+        userRepository.save(userDelete.get());
     }
 
-    private void isNotExsist(String userName, String email) {
-        if (userRepository.existsByUsername(userName)) {
-            throw new AuthApiException(HttpStatus.BAD_REQUEST, "Username is already exists!.");
-        }
-        if (userRepository.existsByEmail(email)) {
-            throw new AuthApiException(HttpStatus.BAD_REQUEST, "Email is already exists!.");
-        }
+    @Override
+    public List<UserInfoResponse> getAllUserOfAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<UserVsAdmin> usersByAdministratorId = userVsAdminRepository.findUsersByAdministratorId((((UserDetailsImpl) auth.getPrincipal()).getId()));
+        return usersByAdministratorId.stream().map(user -> authMethods.mapperUserVsAdminToDTO(user)).collect(Collectors.toList());
     }
 
-    private Users register(RegistrationDto registrationDto) {
-        isNotExsist(registrationDto.getUserName(), registrationDto.getEmail());
-        Users user = new Users(registrationDto.getFullName(), registrationDto.getUserName(), registrationDto.getEmail());
 
-        UserPassword userPassword = new UserPassword(passwordEncoder.encode(registrationDto.getPassword()));
-        userPassword.setUserID(user);
-        user.setUserPasswords(Collections.singleton(userPassword));
-
-        Role userRole = roleRepository.findByRuleName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new AuthApiException(HttpStatus.NOT_IMPLEMENTED, "User Role not set."));
-        UserVsRole userVsRole = new UserVsRole();
-        userVsRole.setRoleID(userRole);
-        userVsRole.setUserID(user);
-        user.setUserVsRoles(Collections.singleton(userVsRole));
-        userRepository.save(user);
-        passwordRepository.save(userPassword);
-        userVsRoleRepository.save(userVsRole);
-
-        return user;
+    @Override
+    public String deleteCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        deleteById((((UserDetailsImpl) auth.getPrincipal()).getId()));
+        return "User delete successfully!";
     }
+
 
 
 }

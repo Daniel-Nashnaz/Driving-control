@@ -30,6 +30,17 @@ public class Driver {
     @Column(name = "TravelStart", nullable = false)
     private Instant travelStart;
 
+    @Column(name = "TravelEnd")
+    private Instant travelEnd;
+
+    public Instant getTravelEnd() {
+        return travelEnd;
+    }
+
+    public void setTravelEnd(Instant travelEnd) {
+        this.travelEnd = travelEnd;
+    }
+
     public Integer getId() {
         return id;
     }

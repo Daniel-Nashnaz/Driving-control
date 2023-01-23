@@ -4,7 +4,7 @@ package com.test.security;
 import com.test.security.jwt.AuthEntryPointJwt;
 import com.test.security.jwt.AuthTokenFilter;
 import com.test.security.jwtService.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.test.service.implementation.AuthMethods;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +12,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +36,10 @@ public class WebSecurityConfig {
         return new AuthTokenFilter();
     }
 
+    @Bean
+    public AuthMethods authenticationMethods() {
+        return new AuthMethods();
+    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -65,8 +68,8 @@ public class WebSecurityConfig {
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 //                .authorizeRequests()
 //                .requestMatchers("/api/v1/auth/**").permitAll()
-//                //.requestMatchers("/api/test/**"/*,"/admin/**"*/).hasAnyRole("ADMIN")
-//                //.requestMatchers("/admin/**").permitAll()//hasAnyRole("ADMIN")
+//                //.requestMatchers("/api/test/**"/*,"/Actions/**"*/).hasAnyRole("ADMIN")
+//                //.requestMatchers("/Actions/**").permitAll()//hasAnyRole("ADMIN")
 //                .anyRequest().authenticated();
 //
 //        http.authenticationProvider(authenticationProvider());
@@ -74,7 +77,7 @@ public class WebSecurityConfig {
 //        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //
 //        return http.build();
-
+       // http.cors().and().csrf().disable();
         http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
@@ -84,7 +87,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
+                        //.requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         return http.build();

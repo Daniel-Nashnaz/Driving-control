@@ -7,8 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Nationalized;
 
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -39,32 +40,68 @@ public class Users {
     @Column(name = "Email", nullable = false, length = 50)
     private String email;
 
-   // @NotNull
-//    @Column(name = "TimeAccountCreated", nullable = false)
-//    private Instant timeAccountCreated;
+    @Size(max = 20)
+    @NotNull
+    @Nationalized
+    @Column(name = "Phone", nullable = false, length = 20)
+    private String phone;
+
 
     @NotNull
     @Column(name = "IsDeleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "userID",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userID", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<UserPassword> userPasswords = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userID",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userID", fetch = FetchType.LAZY)
     private Set<UserVsRole> userVsRoles = new LinkedHashSet<>();
 
 
-
-    @OneToMany(mappedBy = "userID",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userID", fetch = FetchType.LAZY)
     private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
 
 
-    @OneToMany(mappedBy ="userID",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userID", fetch = FetchType.LAZY)
     private Set<UserVsAdmin> userVsAdmins = new LinkedHashSet<>();
 
 
-    @OneToMany(mappedBy ="administratorID",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "administratorID", fetch = FetchType.LAZY)
     private Set<UserVsAdmin> adminsVsUser = new LinkedHashSet<>();
+
+
+    @OneToMany(mappedBy = "userID", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Address> addresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "carAdministrator")
+    private Set<Vehicle> vehicles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userID")
+    private Set<Driver> drivers = new LinkedHashSet<>();
+
+
+    public Users(String fullName, String userName, String email, String phone) {
+        this.fullName = fullName;
+        this.userName = userName;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public Set<UserVsAdmin> getAdminsVsUser() {
         return adminsVsUser;
@@ -90,12 +127,21 @@ public class Users {
         this.refreshTokens = refreshTokens;
     }
 
-    public Users(String fullName, String userName, String email) {
-        this.fullName = fullName;
-        this.userName = userName;
-        this.email = email;
+    public Set<Driver> getDrivers() {
+        return drivers;
     }
 
+    public void setDrivers(Set<Driver> drivers) {
+        this.drivers = drivers;
+    }
+
+    public Set<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(Set<Vehicle> vehicles) {
+        this.vehicles = vehicles;
+    }
     public Integer getId() {
         return id;
     }
@@ -127,14 +173,6 @@ public class Users {
     public void setEmail(String email) {
         this.email = email;
     }
-
-//    public Instant getTimeAccountCreated() {
-//        return timeAccountCreated;
-//    }
-//
-//    public void setTimeAccountCreated(Instant timeAccountCreated) {
-//        this.timeAccountCreated = timeAccountCreated;
-//    }
 
     public Boolean getIsDeleted() {
         return isDeleted;

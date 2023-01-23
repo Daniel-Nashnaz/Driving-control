@@ -33,6 +33,45 @@ public class Vehicle {
     @JsonManagedReference
     private Set<Driver> drivers = new LinkedHashSet<>();
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "CarAdministrator", nullable = false)
+    private Users carAdministrator;
+
+    @Size(max = 20)
+    @NotNull
+    @Nationalized
+    @Column(name = "TypeOfVehicle", nullable = false, length = 20)
+    private String typeOfVehicle;
+
+    @NotNull
+    @Column(name = "\"Year\"", nullable = false)
+    private Integer year;
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getTypeOfVehicle() {
+        return typeOfVehicle;
+    }
+
+    public void setTypeOfVehicle(String typeOfVehicle) {
+        this.typeOfVehicle = typeOfVehicle;
+    }
+
+    public Users getCarAdministrator() {
+        return carAdministrator;
+    }
+
+    public void setCarAdministrator(Users carAdministrator) {
+        this.carAdministrator = carAdministrator;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -4,10 +4,9 @@ import com.test.dto.ApiResponse;
 import com.test.dto.RegistrationDto;
 import com.test.dto.UpdateUser;
 import com.test.dto.UserInfoResponse;
-import com.test.security.jwt.JwtUtils;
-import com.test.security.jwtService.RefreshTokenService;
 import com.test.security.jwtService.UserDetailsImpl;
-import com.test.service.AuthService;
+import com.test.service.ActionsService;
+import com.test.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -28,16 +27,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/home")
 @RequiredArgsConstructor
-public class admin {
+public class Actions {
 
-    private final AuthService authService;
-    private final RefreshTokenService refreshTokenService;
-    private final JwtUtils jwtUtils;
+    private final ActionsService actionsService;
+
+    private final AuthenticationService authenticationService;
 
     @PreAuthorize("permitAll")
     @GetMapping("/all")
     public String allAccess() {
-        return "all can.";
+      return "i am all";
     }
 
     @PreAuthorize("permitAll")
@@ -53,14 +52,15 @@ public class admin {
     @PostAuthorize("hasRole('ADMIN')")
     public String addUser(@Valid @RequestBody RegistrationDto registerDto) {
         //to do method of send email of user with my details and change pass
-        return authService.adminAddUser(registerDto);
+        return actionsService.adminAddUser(registerDto);
 
     }
 
     @PutMapping("/update")
-    @PostAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
+    //@PostAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdateUser updateUser) {
-        ResponseCookie cookie = authService.updateUser(updateUser);
+        ResponseCookie cookie = actionsService.updateUser(updateUser);
         if (cookie == null) {
             return ResponseEntity.ok()
                     .body(new ApiResponse(Instant.now(), "User update successfully!", null));
@@ -71,40 +71,44 @@ public class admin {
 
     }
 
+//curl -X DELETE http://localhost:8080/home/delete/1
+    @DeleteMapping("/deleteById/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> deleteById(@PathVariable Integer id, WebRequest webRequest){
+        actionsService.deleteById(id);
+        return ResponseEntity.ok().body(new ApiResponse(Instant.now(), "User deleted successfully! ",webRequest.getDescription(true)));
+
+    }
+
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteCurrentUser(WebRequest webRequest) {
-        String user = authService.deleteCurrentUser();
-        //move this to authService.
-        Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principle.toString() != "anonymousUser") {
-            Integer userId = ((UserDetailsImpl) principle).getId();
-            refreshTokenService.deleteByUserId(userId);
-        }
-
-        ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
-        ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new ApiResponse(Instant.now(), "You've been signed out!", null));
-        //return ResponseEntity.ok().body(new ApiResponse(Instant.now(), user,webRequest.getDescription(true)));
-
+        String user = actionsService.deleteCurrentUser();
+       return authenticationService.logout(user);
     }
 
+    @GetMapping("/getAllUsers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserInfoResponse>> getAllUserOfAdmin(){
+        List<UserInfoResponse> allUser = actionsService.getAllUserOfAdmin();
+        return ResponseEntity.ok().body(allUser);
+    }
+
+
     @GetMapping("/user-details")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserInfoResponse> userDetails() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Integer id = ((UserDetailsImpl) auth.getPrincipal()).getId();
         String fullName = ((UserDetailsImpl) auth.getPrincipal()).getFullName();
+        String phone = ((UserDetailsImpl) auth.getPrincipal()).getPhone();
         String email = ((UserDetailsImpl) auth.getPrincipal()).getEmail();
         List<String> roles = auth.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        return ResponseEntity.ok().body(new UserInfoResponse(id, fullName, username, email, roles));
+        return ResponseEntity.ok().body(new UserInfoResponse(id, fullName, username, email,phone, roles));
     }
 
 

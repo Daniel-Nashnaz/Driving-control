@@ -28,10 +28,6 @@ public class UserPassword {
     @Column(name = "Password", nullable = false)
     private String password;
 
-    @Size(max = 100)
-    @Nationalized
-    @Column(name = "Token", length = 100)
-    private String token;
 
     @NotNull
     @Column(name = "IsActive", nullable = false)
@@ -65,13 +61,6 @@ public class UserPassword {
         this.password = password;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public Boolean getIsActive() {
         return isActive;

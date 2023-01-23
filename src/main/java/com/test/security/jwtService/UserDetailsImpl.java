@@ -20,16 +20,19 @@ public class UserDetailsImpl implements UserDetails {
 
     private String email;
 
+    private String phone;
+
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id,String fullName, String username, String email, String password,
+    public UserDetailsImpl(Integer id, String fullName, String username, String email, String phone, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.fullName =fullName;
+        this.fullName = fullName;
         this.username = username;
         this.email = email;
+        this.phone = phone;
         this.password = password;
         this.authorities = authorities;
     }
@@ -37,12 +40,19 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(Users user) {
         Set<GrantedAuthority> authorities = user.getUserVsRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getRoleID().getRuleName().toString())).collect(Collectors.toSet());
 
-        String pass = user.getUserPasswords().stream().findFirst().get().getPassword();
+        //String pass = user.getUserPasswords().stream().findFirst().get().getPassword();
+        String pass = user.getUserPasswords()
+                .stream()
+                .filter(up -> up.getIsActive())
+                .findFirst().get().getPassword();
+        //.map(UserPassword::getPassword)
+        //.collect(Collectors.toList());
         return new UserDetailsImpl(
                 user.getId(),
                 user.getFullName(),
                 user.getUserName(),
                 user.getEmail(),
+                user.getPhone(),
                 pass,
                 authorities);
     }
@@ -56,9 +66,18 @@ public class UserDetailsImpl implements UserDetails {
         return id;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getEmail() {
         return email;
     }
+
     public String getFullName() {
         return fullName;
     }
