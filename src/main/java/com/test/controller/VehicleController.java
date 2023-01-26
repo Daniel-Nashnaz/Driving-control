@@ -1,5 +1,7 @@
 package com.test.controller;
 
+import com.test.dto.ApiResponse;
+import com.test.dto.AddDriverDto;
 import com.test.dto.VehicleDto;
 import com.test.security.jwtService.CurrentUser;
 import com.test.security.jwtService.UserDetailsImpl;
@@ -9,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.List;
 
 @RestController
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -22,10 +24,43 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+
+    @GetMapping("/getAllVehicle")
+    public ResponseEntity<List<VehicleDto>> getAllVehicleOfAdmin(@CurrentUser UserDetailsImpl userDetails) {
+        List<VehicleDto> allVehicleByAdmin = vehicleService.getAllVehicleByAdmin(userDetails);
+        return ResponseEntity.ok().body(allVehicleByAdmin);
+    }
+
     @PostMapping()
     public ResponseEntity<VehicleDto> createVehicle(@Valid @RequestBody VehicleDto vehicleDto, @CurrentUser UserDetailsImpl currentUser) {
         VehicleDto vehicle = vehicleService.createVehicle(vehicleDto, currentUser);
         return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
     }
+
+
+    @PutMapping("/updateVehicle/{id}")
+    public ResponseEntity<VehicleDto> updateVehicleById(@PathVariable Integer id, VehicleDto vehicleDto) {
+        VehicleDto vehicleUpdated = vehicleService.updateVehicleByID(id, vehicleDto);
+        return ResponseEntity.ok().body(vehicleUpdated);
+    }
+
+    @DeleteMapping("/deleteVehicleById/{id}")
+    public ResponseEntity<ApiResponse> updateVehicleById(@PathVariable Integer id) {
+        vehicleService.deleteVehicleById(id);
+        return ResponseEntity.ok().body(new ApiResponse(Instant.now(), "Vehicle deleted successfully!", "/deleteVehicleById/" + id));
+    }
+
+    @PostMapping("/addDriver")
+    public ResponseEntity<ApiResponse> addDriver(@Valid @RequestBody AddDriverDto addDriverDto) {
+        String driver = vehicleService.addDriverToVehicle(addDriverDto);
+        return ResponseEntity.ok().body(new ApiResponse(Instant.now(), driver, "/addDriver "));
+    }
+
+
+    @GetMapping("allUserOfVehicle")
+    public ResponseEntity<?> allUserOfVehicle(){
+        return vehicleService.allUserByVehicleId(4);
+    }
+
 
 }

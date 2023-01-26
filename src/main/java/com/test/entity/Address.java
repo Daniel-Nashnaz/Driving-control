@@ -11,8 +11,6 @@ import org.hibernate.annotations.Nationalized;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "Address")
 public class Address {

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "Users")
 public class Users {
@@ -79,123 +83,16 @@ public class Users {
     @OneToMany(mappedBy = "userID")
     private Set<Driver> drivers = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "userID")
+    private Set<Travel> travels = new LinkedHashSet<>();
+
+
 
     public Users(String fullName, String userName, String email, String phone) {
         this.fullName = fullName;
         this.userName = userName;
         this.email = email;
         this.phone = phone;
-    }
-
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Set<UserVsAdmin> getAdminsVsUser() {
-        return adminsVsUser;
-    }
-
-    public void setAdminsVsUser(Set<UserVsAdmin> adminsVsUser) {
-        this.adminsVsUser = adminsVsUser;
-    }
-
-    public Set<UserVsAdmin> getUserVsAdmins() {
-        return userVsAdmins;
-    }
-
-    public void setUserVsAdmins(Set<UserVsAdmin> userVsAdmins) {
-        this.userVsAdmins = userVsAdmins;
-    }
-
-    public Set<RefreshToken> getRefreshTokens() {
-        return refreshTokens;
-    }
-
-    public void setRefreshTokens(Set<RefreshToken> refreshTokens) {
-        this.refreshTokens = refreshTokens;
-    }
-
-    public Set<Driver> getDrivers() {
-        return drivers;
-    }
-
-    public void setDrivers(Set<Driver> drivers) {
-        this.drivers = drivers;
-    }
-
-    public Set<Vehicle> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(Set<Vehicle> vehicles) {
-        this.vehicles = vehicles;
-    }
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public Set<UserPassword> getUserPasswords() {
-        return userPasswords;
-    }
-
-    public void setUserPasswords(Set<UserPassword> userPasswords) {
-        this.userPasswords = userPasswords;
-    }
-
-    public Set<UserVsRole> getUserVsRoles() {
-        return userVsRoles;
-    }
-
-    public void setUserVsRoles(Set<UserVsRole> userVsRoles) {
-        this.userVsRoles = userVsRoles;
     }
 
 }

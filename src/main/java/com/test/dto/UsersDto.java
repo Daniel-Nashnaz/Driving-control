@@ -37,5 +37,5 @@ public class UsersDto implements Serializable {
     private Set<UserPasswordDto> userPasswords = new LinkedHashSet<>();
     private List<AddressDto> addresses = new ArrayList<>();
     private Set<VehicleDto> vehicles = new LinkedHashSet<>();
-    private Set<DriverDto> drivers = new LinkedHashSet<>();
+    private Set<AddDriverDto> drivers = new LinkedHashSet<>();
 }

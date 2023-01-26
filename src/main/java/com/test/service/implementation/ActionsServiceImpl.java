@@ -2,12 +2,14 @@ package com.test.service.implementation;
 
 import com.test.dto.*;
 import com.test.entity.*;
+import com.test.exception.AuthApiException;
 import com.test.repository.*;
 import com.test.security.jwt.JwtUtils;
 import com.test.security.jwtService.RefreshTokenService;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.ActionsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -41,8 +43,6 @@ public class ActionsServiceImpl implements ActionsService {
         userVsAdmin.setUserID(authMethods.register(registrationDto, RoleName.ROLE_USER));
 
         userVsAdmin.setAdministratorID(userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get());
-        // try to do
-        // userVsAdmin.setAdministratorID(((Users) auth.getPrincipal()));
 
         userVsAdminRepository.save(userVsAdmin);
 
@@ -114,7 +114,7 @@ public class ActionsServiceImpl implements ActionsService {
 
     @Override
     public void deleteById(Integer id) {
-        Optional<Users> userDelete = userRepository.findById(id);
+        Optional<Users> userDelete = Optional.ofNullable(userRepository.findById(id).orElseThrow(() -> new AuthApiException(HttpStatus.BAD_REQUEST, "user not found.")));
         userDelete.get().setIsDeleted(true);
         userDelete.get().getUserPasswords()
                 .stream()
@@ -136,7 +136,7 @@ public class ActionsServiceImpl implements ActionsService {
     public String deleteCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         deleteById((((UserDetailsImpl) auth.getPrincipal()).getId()));
-        return "User delete successfully!";
+        return "User deleted successfully!";
     }
 
 

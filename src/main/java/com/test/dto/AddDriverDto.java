@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.Instant;
 
 /**
  * A DTO for the {@link com.test.entity.Driver} entity
@@ -16,13 +15,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class DriverDto implements Serializable {
-    private Integer id;
+public class AddDriverDto implements Serializable {
     @NotNull
-    private UsersDto userID;
+    private Integer vehicleId;
     @NotNull
-    private VehicleDto vehicleID;
-    @NotNull
-    private Instant travelStart;
-    private Instant travelEnd;
+    private String userNameOrEmail;
+
 }

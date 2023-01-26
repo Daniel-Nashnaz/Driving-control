@@ -4,6 +4,7 @@ import com.test.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +17,11 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
 
     @Query("select (count(u) > 0) from Users u where upper(u.email) = upper(:email)")
     boolean existsByEmail(String email);
-        @Query("SELECT new Users(e.email, e.fullName, e.userName) FROM Users e")
-    List<Users> findByQuery();
+      //  @Query("SELECT new Users(e.email, e.fullName, e.userName) FROM Users e")
+   // List<Users> findByQuery();
+        @Procedure("SearchEmployee")
+        List<Users> searchEmployee(String userName);
+
 
 
   Optional<Users> findByUserNameAndIsDeletedFalseOrEmailAndIsDeletedFalse(String userName, String email);

@@ -17,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 //@EnableWebSecurity
@@ -77,7 +79,7 @@ public class WebSecurityConfig {
 //        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //
 //        return http.build();
-       // http.cors().and().csrf().disable();
+        // http.cors().and().csrf().disable();
         http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
@@ -91,5 +93,16 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         return http.build();
+    }
+
+
+    @Bean
+    public WebMvcConfigurer configure() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry reg) {
+                reg.addMapping("/**").allowedOrigins("*");
+            }
+        };
     }
 }

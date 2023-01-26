@@ -16,7 +16,7 @@ import java.time.Instant;
 //@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600, allowCredentials="true")
 @RestController
 @RequestMapping({"/api/v1/auth/"})
-@CrossOrigin(origins = "*"/*, maxAge = 3600*/)
+//@CrossOrigin(origins = "*"/*, maxAge = 3600*/)
 @RequiredArgsConstructor
 public class AuthController {
 

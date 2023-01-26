@@ -1,18 +1,27 @@
 package com.test.service.implementation;
 
+import com.test.dto.AddDriverDto;
 import com.test.dto.VehicleDto;
+import com.test.entity.Driver;
 import com.test.entity.Users;
 import com.test.entity.Vehicle;
-import com.test.mapper.VehicleMapper;
+import com.test.exception.AuthApiException;
+import com.test.repository.DriverRepository;
 import com.test.repository.UserRepository;
 import com.test.repository.VehicleRepository;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.VehicleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.attribute.UserPrincipal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.test.mapper.VehicleMapper.DtoToVehicle;
+import static com.test.mapper.VehicleMapper.vehicleToDto;
 
 @Service
 @RequiredArgsConstructor
@@ -20,17 +29,62 @@ public class VehicleServiceImpl implements VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final UserRepository userRepository;
+    private final DriverRepository driverRepository;
 
     @Override
     public VehicleDto createVehicle(VehicleDto vehicleDto, UserDetailsImpl currentUser) {
-        Vehicle vehicle = new Vehicle();
-        vehicle.setVehicleNumber(vehicleDto.getVehicleNumber());
-        vehicle.setVehicleName(vehicleDto.getVehicleName());
-        vehicle.setTypeOfVehicle(vehicleDto.getTypeOfVehicle());
-        vehicle.setYear(vehicleDto.getYear());
+        Vehicle vehicle = DtoToVehicle(vehicleDto);
+        vehicle.setIsDeleted(false);
         Optional<Users> users = userRepository.findById(currentUser.getId());
         vehicle.setCarAdministrator(users.get());
         Vehicle vehicleSaved = vehicleRepository.save(vehicle);
-        return VehicleMapper.vehicleToDto(vehicleSaved);
+        return vehicleToDto(vehicleSaved);
+    }
+
+    @Override
+    public List<VehicleDto> getAllVehicleByAdmin(UserDetailsImpl currentUser) {
+        List<Vehicle> byCarAdministratorId = vehicleRepository.findByCarAdministratorIdAndIsDeletedIsFalse(currentUser.getId());
+        return byCarAdministratorId.stream().map(vehicle -> vehicleToDto(vehicle)).collect(Collectors.toList());
+    }
+
+    @Override
+    public VehicleDto updateVehicleByID(Integer id,VehicleDto vehicleDto) {
+        Vehicle vehicleId = vehicleRepository.findByIdAndIsDeletedIsFalse(id).orElseThrow(()->new AuthApiException(HttpStatus.BAD_REQUEST,"vehicle not found."));
+        vehicleId.setVehicleName(vehicleDto.getVehicleName());
+        vehicleId.setVehicleNumber(vehicleDto.getVehicleNumber());
+        vehicleId.setTypeOfVehicle(vehicleDto.getTypeOfVehicle());
+        vehicleId.setYear(vehicleDto.getYear());
+        Vehicle updateVehicle = vehicleRepository.save(vehicleId);
+        return vehicleToDto(updateVehicle);
+
+    }
+
+    @Override
+    public void deleteVehicleById(Integer id) {
+        Vehicle vehicleDeleted = vehicleRepository.findByIdAndIsDeletedIsFalse(id).orElseThrow(()->new AuthApiException(HttpStatus.BAD_REQUEST,"vehicle not found."));
+        vehicleDeleted.setIsDeleted(true);
+        vehicleRepository.save(vehicleDeleted);
+    }
+
+    @Override
+    public String addDriverToVehicle(AddDriverDto addDriverDto) {
+        Users userOfVehicle = userRepository.findByUserNameAndIsDeletedFalseOrEmailAndIsDeletedFalse(addDriverDto.getUserNameOrEmail(), addDriverDto.getUserNameOrEmail())
+                .orElseThrow(() -> new AuthApiException(HttpStatus.BAD_REQUEST, "User name or Email not exsist."));
+
+        Vehicle vehicleOfUser = vehicleRepository.findById(addDriverDto.getVehicleId())
+                .orElseThrow(() -> new AuthApiException(HttpStatus.BAD_REQUEST, "Vehicle not exsist"));
+
+        Driver newDriver = new Driver();
+        newDriver.setUserID(userOfVehicle);
+        newDriver.setVehicleID(vehicleOfUser);
+        driverRepository.save(newDriver);
+        return "Driver to vehicle successfully!";
+    }
+
+
+    @Override
+    public ResponseEntity<?> allUserByVehicleId(Integer vehicleId) {
+        Optional<Driver> byVehicleID = driverRepository.findByVehicleID(vehicleId);
+        return ResponseEntity.ok(byVehicleID.get());
     }
 }

@@ -48,6 +48,30 @@ public class Vehicle {
     @Column(name = "\"Year\"", nullable = false)
     private Integer year;
 
+    @NotNull
+    @Column(name = "IsDeleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "vehicleID")
+    private Set<Travel> travels = new LinkedHashSet<>();
+
+    public Set<Travel> getTravels() {
+        return travels;
+    }
+
+    public void setTravels(Set<Travel> travels) {
+        this.travels = travels;
+    }
+
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public Integer getYear() {
         return year;
     }

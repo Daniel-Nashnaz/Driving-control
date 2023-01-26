@@ -5,14 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Drivers")
-public class Driver {
+@Table(name = "Travels")
+public class Travel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "TripID", nullable = false)
     private Integer id;
 
     @NotNull
@@ -24,6 +25,13 @@ public class Driver {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "VehicleID", nullable = false)
     private Vehicle vehicleID;
+
+    @Column(name = "TravelEnd")
+    private Instant travelEnd;
+
+    @NotNull
+    @Column(name = "TravelStart", nullable = false)
+    private Instant travelStart;
 
     public Integer getId() {
         return id;
@@ -47,6 +55,22 @@ public class Driver {
 
     public void setVehicleID(Vehicle vehicleID) {
         this.vehicleID = vehicleID;
+    }
+
+    public Instant getTravelEnd() {
+        return travelEnd;
+    }
+
+    public void setTravelEnd(Instant travelEnd) {
+        this.travelEnd = travelEnd;
+    }
+
+    public Instant getTravelStart() {
+        return travelStart;
+    }
+
+    public void setTravelStart(Instant travelStart) {
+        this.travelStart = travelStart;
     }
 
 }
