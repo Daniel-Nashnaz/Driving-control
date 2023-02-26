@@ -57,9 +57,9 @@ public class VehicleController {
     }
 
 
-    @GetMapping("allUserOfVehicle")
-    public ResponseEntity<?> allUserOfVehicle(){
-        return vehicleService.allUserByVehicleId(4);
+    @GetMapping("allUserOfVehicle/{vehicleId}")
+    public ResponseEntity<?> allUserOfVehicle(@PathVariable Integer vehicleId){
+        return vehicleService.allUserByVehicleId(vehicleId);
     }
 
 

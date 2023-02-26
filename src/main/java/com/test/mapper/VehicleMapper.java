@@ -1,5 +1,6 @@
 package com.test.mapper;
 
+import com.test.dto.DriversDto;
 import com.test.dto.UsersDto;
 import com.test.dto.VehicleDto;
 import com.test.entity.Driver;
@@ -45,5 +46,14 @@ public class VehicleMapper {
 
     }
 
+
+    public static DriversDto userOfDriverToDto(Users users){
+        DriversDto driversDto = new DriversDto()
+                .setFullName(users.getFullName())
+                .setUserName(users.getUserName())
+                .setEmail(users.getEmail())
+                .setPhone(users.getPhone());
+        return driversDto;
+    }
 
 }

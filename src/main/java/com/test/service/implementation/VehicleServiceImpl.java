@@ -1,11 +1,14 @@
 package com.test.service.implementation;
 
 import com.test.dto.AddDriverDto;
+import com.test.dto.DriversDto;
 import com.test.dto.VehicleDto;
 import com.test.entity.Driver;
+import com.test.entity.UserVsAdmin;
 import com.test.entity.Users;
 import com.test.entity.Vehicle;
 import com.test.exception.AuthApiException;
+import com.test.mapper.VehicleMapper;
 import com.test.repository.DriverRepository;
 import com.test.repository.UserRepository;
 import com.test.repository.VehicleRepository;
@@ -20,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.test.mapper.VehicleMapper.DtoToVehicle;
-import static com.test.mapper.VehicleMapper.vehicleToDto;
+import static com.test.mapper.VehicleMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +86,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public ResponseEntity<?> allUserByVehicleId(Integer vehicleId) {
-        Optional<Driver> byVehicleID = driverRepository.findByVehicleID(vehicleId);
-        return ResponseEntity.ok(byVehicleID.get());
+        List<Driver> usersByVehicleID = driverRepository.findUsersByVehicleID(vehicleId);
+        List<DriversDto> collect = usersByVehicleID.stream().map(Driver::getUserID).map(VehicleMapper::userOfDriverToDto).collect(Collectors.toList());
+        return ResponseEntity.ok(collect);
     }
 }
