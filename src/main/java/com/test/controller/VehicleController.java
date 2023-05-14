@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VehicleController {
 
+
     private final VehicleService vehicleService;
 
 
@@ -31,7 +32,7 @@ public class VehicleController {
         return ResponseEntity.ok().body(allVehicleByAdmin);
     }
 
-    @PostMapping()
+    @PostMapping("/addVehicle")
     public ResponseEntity<VehicleDto> createVehicle(@Valid @RequestBody VehicleDto vehicleDto, @CurrentUser UserDetailsImpl currentUser) {
         VehicleDto vehicle = vehicleService.createVehicle(vehicleDto, currentUser);
         return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
@@ -39,13 +40,14 @@ public class VehicleController {
 
 
     @PutMapping("/updateVehicle/{id}")
-    public ResponseEntity<VehicleDto> updateVehicleById(@PathVariable Integer id, VehicleDto vehicleDto) {
+    public ResponseEntity<VehicleDto> updateVehicleById(@PathVariable Integer id, @Valid @RequestBody  VehicleDto vehicleDto) {
         VehicleDto vehicleUpdated = vehicleService.updateVehicleByID(id, vehicleDto);
         return ResponseEntity.ok().body(vehicleUpdated);
     }
 
     @DeleteMapping("/deleteVehicleById/{id}")
     public ResponseEntity<ApiResponse> updateVehicleById(@PathVariable Integer id) {
+        System.out.println("del");
         vehicleService.deleteVehicleById(id);
         return ResponseEntity.ok().body(new ApiResponse(Instant.now(), "Vehicle deleted successfully!", "/deleteVehicleById/" + id));
     }
@@ -55,7 +57,6 @@ public class VehicleController {
         String driver = vehicleService.addDriverToVehicle(addDriverDto);
         return ResponseEntity.ok().body(new ApiResponse(Instant.now(), driver, "/addDriver "));
     }
-
 
     @GetMapping("allUserOfVehicle/{vehicleId}")
     public ResponseEntity<?> allUserOfVehicle(@PathVariable Integer vehicleId){

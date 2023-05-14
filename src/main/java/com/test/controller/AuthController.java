@@ -16,8 +16,9 @@ import java.time.Instant;
 //@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600, allowCredentials="true")
 @RestController
 @RequestMapping({"/api/v1/auth/"})
-//@CrossOrigin(origins = "*"/*, maxAge = 3600*/)
+//@CrossOrigin(origins = "http://localhost:3000"/*, maxAge = 3600*/)
 @RequiredArgsConstructor
+//@CrossOrigin(origins = {"http://localhost:3000"})
 public class AuthController {
 
     private final AuthenticationService authenticationService;
@@ -32,10 +33,6 @@ public class AuthController {
     @PostMapping(value = {"/register", "/signup"})
     public ResponseEntity<?> registerOfAdmin(@Valid @RequestBody RegistrationDto registerDto, WebRequest webRequest) {
         String response = authenticationService.registerAdmin(registerDto);
-        //        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/users/{username}")
-//                .buildAndExpand(result.getUsername()).toUri();
-//.created(location)
 
         return new ResponseEntity<>(new ApiResponse(Instant.now(), response, webRequest.getDescription(true)), HttpStatus.CREATED);
 

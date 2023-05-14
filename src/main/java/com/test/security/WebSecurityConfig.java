@@ -90,13 +90,15 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         //.requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
+                        .requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
+                        .requestMatchers(/*HttpMethod.POST,*/"/api/**").permitAll()
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         return http.build();
     }
 
 
-    @Bean
+   /* @Bean
     public WebMvcConfigurer configure() {
         return new WebMvcConfigurer() {
             @Override
@@ -104,5 +106,5 @@ public class WebSecurityConfig {
                 reg.addMapping("/**").allowedOrigins("*");
             }
         };
-    }
+    }*/
 }

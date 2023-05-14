@@ -1,34 +1,33 @@
 package com.test.dto;
 
-import com.test.dto.UsersDto;
-import com.test.entity.Address;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-
 import java.io.Serializable;
 
-/**
- * A DTO for the {@link Address} entity
- */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class AddressDto implements Serializable {
+public class UsersOfAdminDto implements Serializable {
+    @NotNull
     private Integer id;
-    private Integer userID;
+    @NotNull
+    private Integer tripId;
     @Size(max = 100)
     @NotNull
-    private String address;
-    @Size(max = 10)
-    @NotNull
-    private String apartmentNumber;
+    private String fullName;
     @Size(max = 50)
     @NotNull
-    private String city;
+    private String userName;
     @Size(max = 50)
     @NotNull
-    private String country;
+    private String email;
+    @Size(max = 20)
+    @NotNull
+    private String phone;
+
 }

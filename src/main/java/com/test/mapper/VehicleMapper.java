@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VehicleMapper {
 
-    private final DriverRepository driverRepository;
+
 
 
     public static VehicleDto vehicleToDto(Vehicle vehicle) {
@@ -24,7 +24,6 @@ public class VehicleMapper {
         VehicleDto vehicleDto = new VehicleDto()
                 .setId(vehicle.getId())
                 //to do .setDrivers(vehicle.getDrivers())
-                .setCarAdministrator(vehicle.getCarAdministrator().getId())
                 .setTypeOfVehicle(vehicle.getTypeOfVehicle())
                 .setVehicleName(vehicle.getVehicleName())
                 .setVehicleNumber(vehicle.getVehicleNumber())

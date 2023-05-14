@@ -20,8 +20,6 @@ import java.util.Set;
 @Accessors(chain = true)
 public class VehicleDto implements Serializable {
     private Integer id;
-    private Integer carAdministrator;
-    private Set<DriversDto> drivers = new LinkedHashSet<>();
 
     @Size(min = 2,max = 10, message = "Vehicle number should have at bigger 2 characters and least 10 characters")
     @NotNull(message = "You must fill in the number of the vehicle")

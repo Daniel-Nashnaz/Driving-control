@@ -13,4 +13,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     List<Vehicle> findByCarAdministratorIdAndIsDeletedIsFalse(Integer id);
 
     Optional<Vehicle> findByIdAndIsDeletedIsFalse(Integer id);
+
+
+    Optional<Vehicle> findVehicleByVehicleNumberAndIsDeletedIsFalse(String vehicleNumber);
 }

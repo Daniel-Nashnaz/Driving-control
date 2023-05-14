@@ -25,7 +25,7 @@ public class UpdateUser implements Serializable {
     @Size(min = 5, max = 20, message = "phone must be greater than 5 and less than 20")
     private final String phone;
 
-    @Size(min = 6, message = "password must be greater than 6 and less than 50")
+    //@Size(min = 6, message = "password must be greater than 6 and less than 50")
     private final String password;
 
 

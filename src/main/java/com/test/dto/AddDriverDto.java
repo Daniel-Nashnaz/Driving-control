@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class AddDriverDto implements Serializable {
     @NotNull
-    private Integer vehicleId;
+    private String vehicleNumber;
     @NotNull
     private String userNameOrEmail;
 

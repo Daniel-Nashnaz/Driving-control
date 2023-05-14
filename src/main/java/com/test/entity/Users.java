@@ -1,5 +1,6 @@
 package com.test.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -86,6 +87,13 @@ public class Users {
     @OneToMany(mappedBy = "userID")
     private Set<Travel> travels = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "userID", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Message> messages = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userID")
+    @JsonManagedReference
+    private Set<UsersAllowSendingMessage> usersAllowSendingMessages = new LinkedHashSet<>();
 
 
     public Users(String fullName, String userName, String email, String phone) {

@@ -62,6 +62,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromHeader(HttpServletRequest request) {
+        System.out.println(request);
+        System.out.println(request.getCookies());
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;

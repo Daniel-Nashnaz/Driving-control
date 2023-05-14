@@ -73,12 +73,14 @@ public class VehicleServiceImpl implements VehicleService {
         Users userOfVehicle = userRepository.findByUserNameAndIsDeletedFalseOrEmailAndIsDeletedFalse(addDriverDto.getUserNameOrEmail(), addDriverDto.getUserNameOrEmail())
                 .orElseThrow(() -> new AuthApiException(HttpStatus.BAD_REQUEST, "User name or Email not exsist."));
 
-        Vehicle vehicleOfUser = vehicleRepository.findById(addDriverDto.getVehicleId())
+        Vehicle vehicle = vehicleRepository.findVehicleByVehicleNumberAndIsDeletedIsFalse(addDriverDto.getVehicleNumber())
                 .orElseThrow(() -> new AuthApiException(HttpStatus.BAD_REQUEST, "Vehicle not exsist"));
-
+        if(driverRepository.existsDriverByVehicleIDAndUserID(vehicle,userOfVehicle)){
+            return "Already exists!";
+        }
         Driver newDriver = new Driver();
         newDriver.setUserID(userOfVehicle);
-        newDriver.setVehicleID(vehicleOfUser);
+        newDriver.setVehicleID(vehicle);
         driverRepository.save(newDriver);
         return "Driver to vehicle successfully!";
     }

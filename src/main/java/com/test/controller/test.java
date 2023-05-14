@@ -16,9 +16,9 @@ public class test {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public String userAccess() {
-        return "User Content...";
+        return "User Content...::::::";
     }
 
 

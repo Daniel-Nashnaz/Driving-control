@@ -1,11 +1,15 @@
 package com.test.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -32,6 +36,41 @@ public class Travel {
     @NotNull
     @Column(name = "TravelStart", nullable = false)
     private Instant travelStart;
+
+    @OneToOne(mappedBy = "tripID")
+    @JsonManagedReference
+    private MoreInfoAboutStatistic moreInfoAboutStatistic;
+
+    @OneToMany(mappedBy = "tripID")
+    private Set<RealTimeInformation> realTimeInformations = new LinkedHashSet<>();
+
+    @OneToOne(mappedBy = "tripID")
+    @JsonManagedReference
+    private TripStatistic tripStatistic;
+
+    public TripStatistic getTripStatistic() {
+        return tripStatistic;
+    }
+
+    public void setTripStatistic(TripStatistic tripStatistic) {
+        this.tripStatistic = tripStatistic;
+    }
+
+    public Set<RealTimeInformation> getRealTimeInformations() {
+        return realTimeInformations;
+    }
+
+    public void setRealTimeInformations(Set<RealTimeInformation> realTimeInformations) {
+        this.realTimeInformations = realTimeInformations;
+    }
+
+    public MoreInfoAboutStatistic getMoreInfoAboutStatistic() {
+        return moreInfoAboutStatistic;
+    }
+
+    public void setMoreInfoAboutStatistic(MoreInfoAboutStatistic moreInfoAboutStatistic) {
+        this.moreInfoAboutStatistic = moreInfoAboutStatistic;
+    }
 
     public Integer getId() {
         return id;
