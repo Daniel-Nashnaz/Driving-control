@@ -26,11 +26,14 @@ public interface ActionsService {
 
     List<AddressDto> getAddressOfUserId(Integer id);
 
-    List<UsersAllowSendingMessageDto> getMessageSendSettingsOfUserId(Integer id);
+    List<UsersAllowSendingMessageDto> getMessageSendSettingsOfAdminId(Integer id);
 
-    List<MessageDto> getAllMessagesSendOftUserId(Integer id);
+    List<MessageDto> getAllMessagesSendOftAdminId(Integer id);
 
     String addAdminIfWantToGetMessages(UsersAllowSendingMessageDto usersAllowSendingMessageDto);
 
     List<MessageDto> getAllMessagesSendOfCurrentUser(UserDetailsImpl currentUser);
+
+
+    String updateAllowMessageOfAdmin(UsersAllowSendingMessageDto usersAllowSendingMessageDto);
 }

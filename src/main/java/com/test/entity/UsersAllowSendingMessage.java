@@ -20,6 +20,7 @@ public class UsersAllowSendingMessage {
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "UserID", nullable = false)
+    //this is Admin ID.
     private Users userID;
 
     @NotNull
@@ -45,5 +46,9 @@ public class UsersAllowSendingMessage {
     @NotNull
     @Column(name = "SuddenBraking", nullable = false)
     private Boolean suddenBraking = false;
+
+    @NotNull
+    @Column(name = "Reports", nullable = false)
+    private Boolean reports = false;
 
 }

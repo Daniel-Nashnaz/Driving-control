@@ -7,6 +7,7 @@ import com.test.security.jwtService.UserDetailsServiceImpl;
 import com.test.service.implementation.AuthMethods;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -22,7 +23,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 //@EnableWebSecurity
+@EnableScheduling
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -65,33 +68,18 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//                .authorizeRequests()
-//                .requestMatchers("/api/v1/auth/**").permitAll()
-//                //.requestMatchers("/api/test/**"/*,"/Actions/**"*/).hasAnyRole("ADMIN")
-//                //.requestMatchers("/Actions/**").permitAll()//hasAnyRole("ADMIN")
-//                .anyRequest().authenticated();
-//
-//        http.authenticationProvider(authenticationProvider());
-//
-//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-        // http.cors().and().csrf().disable();
         http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable()
+                .csrf().disable() // change this to more security.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         //.requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
-                        .requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
-                        .requestMatchers(/*HttpMethod.POST,*/"/api/**").permitAll()
+                        //.requestMatchers(/*HttpMethod.POST,*/"/home/**" ).permitAll()
+                        //.requestMatchers(/*HttpMethod.POST,*/"/api/**").permitAll()
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         return http.build();

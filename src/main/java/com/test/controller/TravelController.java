@@ -1,21 +1,29 @@
 package com.test.controller;
 
-import com.test.dto.AllStatisticsDTO;
-import com.test.dto.RealTimeInformationDto;
-import com.test.dto.TripsOfUserDto;
-import com.test.dto.UsersOfAdminDto;
-import com.test.entity.TripStatistic;
+import com.test.dto.*;
+import com.test.entity.Message;
+import com.test.exception.AuthApiException;
+import com.test.repository.MessageRepository;
+import com.test.repository.TravelRepository;
 import com.test.repository.TripStatisticRepository;
+import com.test.repository.UserRepository;
+import com.test.scheduler.MyScheduler;
 import com.test.security.jwtService.CurrentUser;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.implementation.TravelServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +36,9 @@ public class TravelController {
 
     private final TravelServiceImpl travelService;
     private final TripStatisticRepository tripStatisticRepository;
+    private final TravelRepository travelRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     //first view
     @GetMapping("/getAllUsersByLastTravel")
@@ -52,6 +63,15 @@ public class TravelController {
        List<RealTimeInformationDto> allInformation = travelService.getAllDataOfTripId(tripId);
        return ResponseEntity.ok().body(allInformation);
    }
+
+    @GetMapping("getAllD")
+    public String getTripDetails() {
+    return "";
+    }
+
+
+
+
 
 
 }

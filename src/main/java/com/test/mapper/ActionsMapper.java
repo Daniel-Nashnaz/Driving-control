@@ -25,6 +25,7 @@ public class ActionsMapper {
         UsersAllowSendingMessageDto usersAllowSendingMessageDto = new UsersAllowSendingMessageDto()
                 .setUserId(usersAllowSendingMessage.getUserID().getId())
                 .setAlertLevel(usersAllowSendingMessage.getAlertLevel())
+                .setReports(usersAllowSendingMessage.getReports())
                 .setExceededSpeedLimit(usersAllowSendingMessage.getExceededSpeedLimit())
                 .setLaneDeparture(usersAllowSendingMessage.getLaneDeparture())
                 .setForwardDirections(usersAllowSendingMessage.getForwardDirections())

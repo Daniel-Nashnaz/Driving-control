@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token is not in database!"));
         }
 
-        return new ResponseEntity<>(new ApiResponse(Instant.now(), "Refresh Token is empty!", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(Instant.now(), "Refresh Token is empty!", null), HttpStatus.UNAUTHORIZED);
 
     }
 

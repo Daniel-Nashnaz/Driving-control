@@ -13,7 +13,7 @@ public interface UsersAllowSendingMessageRepository extends JpaRepository<UsersA
 
     //@Query("SELECT u FROM Users u JOIN FETCH u.usersAllowSendingMessage WHERE u.id = :userId")
     List<UsersAllowSendingMessage> getUsersAllowSendingMessageByUserID_Id(Integer userId);
-
+    List<UsersAllowSendingMessage> getUsersAllowSendingMessageByReportsIsTrueAndAlertLevel(Integer alertLevel);
     // List<UsersAllowSendingMessage> findByUserID_Id(Integer id);
     // @Transactional
     //List<UsersAllowSendingMessage> getUsersAllowSendingMessageByUserID_Id(Integer userID);

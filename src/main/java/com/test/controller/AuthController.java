@@ -38,13 +38,13 @@ public class AuthController {
 
     }
 
-    @PostMapping("/signout")
+    @GetMapping("/signout")
     public ResponseEntity<ApiResponse> logoutUser() {
         String user = "You've been signed out!";
         return authenticationService.logout(user);
     }
 
-    @PostMapping("/refreshtoken")
+    @GetMapping("/refreshtoken")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
       return authenticationService.refreshToken(request);
     }

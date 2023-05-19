@@ -4,6 +4,7 @@ import com.test.dto.*;
 import com.test.entity.*;
 import com.test.exception.AuthApiException;
 import com.test.mapper.ActionsMapper;
+import com.test.mapper.AuthMapper;
 import com.test.repository.*;
 import com.test.security.jwt.JwtUtils;
 import com.test.security.jwtService.UserDetailsImpl;
@@ -113,8 +114,7 @@ public class ActionsServiceImpl implements ActionsService {
     }
 
 
-
-    public String updateUserById(Integer id,UpdateUser updateUser) {
+    public String updateUserById(Integer id, UpdateUser updateUser) {
         authMethods.isNotExsist(updateUser.getUserName(), updateUser.getEmail());
         Users userUpdate = userRepository.findById(id).get();
         userUpdate.setUserName(updateUser.getUserName());
@@ -142,7 +142,7 @@ public class ActionsServiceImpl implements ActionsService {
     public List<UserInfoResponse> getAllUserOfAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<UserVsAdmin> usersByAdministratorId = userVsAdminRepository.findUsersByAdministratorId((((UserDetailsImpl) auth.getPrincipal()).getId()));
-        return usersByAdministratorId.stream().map(user -> authMethods.mapperUserVsAdminToDTO(user)).collect(Collectors.toList());
+        return usersByAdministratorId.stream().map(user -> AuthMapper.mapperUserVsAdminToDTO(user)).collect(Collectors.toList());
     }
 
     @Override
@@ -160,12 +160,14 @@ public class ActionsServiceImpl implements ActionsService {
 
     }
 
+
     @Override
-    public List<MessageDto> getAllMessagesSendOftUserId(Integer id) {
+    public List<MessageDto> getAllMessagesSendOftAdminId(Integer id) {
         List<Message> messagesByUserId = messageRepository.getMessagesByUserID_IdAndSentTimeIsNotNull(id);
         return messagesByUserId.stream().map(message -> ActionsMapper.MessagesToDto(message)).collect(Collectors.toList());
 
     }
+
     @Override
     public String addAdminIfWantToGetMessages(UsersAllowSendingMessageDto usersAllowSendingMessageDto) {
         UsersAllowSendingMessage usersAllowSendingMessage = new UsersAllowSendingMessage();
@@ -175,14 +177,38 @@ public class ActionsServiceImpl implements ActionsService {
         usersAllowSendingMessage.setSuddenBraking(usersAllowSendingMessageDto.getSuddenBraking());
         usersAllowSendingMessage.setExceededSpeedLimit(usersAllowSendingMessageDto.getExceededSpeedLimit());
         usersAllowSendingMessage.setPedestrianAndCyclistCollision(usersAllowSendingMessageDto.getPedestrianAndCyclistCollision());
-        usersAllowSendingMessage.setUserID(userRepository.findById(usersAllowSendingMessageDto.getUserId()).get());
+        if (usersAllowSendingMessageDto.getUserId() == 0 || usersAllowSendingMessageDto.getUserId() == null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            usersAllowSendingMessage.setUserID(userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get());
+        } else {
+            usersAllowSendingMessage.setUserID(userRepository.findById(usersAllowSendingMessageDto.getUserId()).get());
+        }
         usersAllowSendingMessageRepository.save(usersAllowSendingMessage);
-        return "setting updated!";
+        return "setting added!";
 
     }
 
     @Override
-    public List<UsersAllowSendingMessageDto> getMessageSendSettingsOfUserId(Integer id) {
+    public String updateAllowMessageOfAdmin(UsersAllowSendingMessageDto usersAllowSendingMessageDto) {
+        UsersAllowSendingMessage usersAllowSendingMessage;
+        if (usersAllowSendingMessageDto.getUserId() == 0) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            usersAllowSendingMessage = usersAllowSendingMessageRepository.getUsersAllowSendingMessageByUserID_Id(((UserDetailsImpl) auth.getPrincipal()).getId()).get(0);
+        } else {
+            usersAllowSendingMessage = usersAllowSendingMessageRepository.getUsersAllowSendingMessageByUserID_Id((usersAllowSendingMessageDto.getUserId())).get(0);
+        }
+        usersAllowSendingMessage.setAlertLevel(usersAllowSendingMessageDto.getAlertLevel());
+        usersAllowSendingMessage.setForwardDirections(usersAllowSendingMessageDto.getForwardDirections());
+        usersAllowSendingMessage.setLaneDeparture(usersAllowSendingMessageDto.getLaneDeparture());
+        usersAllowSendingMessage.setSuddenBraking(usersAllowSendingMessageDto.getSuddenBraking());
+        usersAllowSendingMessage.setExceededSpeedLimit(usersAllowSendingMessageDto.getExceededSpeedLimit());
+        usersAllowSendingMessage.setPedestrianAndCyclistCollision(usersAllowSendingMessageDto.getPedestrianAndCyclistCollision());
+        usersAllowSendingMessageRepository.save(usersAllowSendingMessage);
+        return "setting updated!";
+    }
+
+    @Override
+    public List<UsersAllowSendingMessageDto> getMessageSendSettingsOfAdminId(Integer id) {
         List<UsersAllowSendingMessage> messageAllowOfUserID = usersAllowSendingMessageRepository.getUsersAllowSendingMessageByUserID_Id(id);
         return messageAllowOfUserID.stream().map(usersAllowSendingMessage -> ActionsMapper.usersAllowSendingMessageToDto(usersAllowSendingMessage)).collect(Collectors.toList());
 

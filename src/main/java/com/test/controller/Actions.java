@@ -32,8 +32,7 @@ public class Actions {
     private final ActionsService actionsService;
 
     private final AuthenticationService authenticationService;
-    private final UsersAllowSendingMessageRepository usersAllowSendingMessageRepository;
-    private final MessageRepository messageRepository;
+
 
     @PreAuthorize("permitAll")
     @GetMapping("/all")
@@ -84,7 +83,6 @@ public class Actions {
 
     }
 
-    //curl -X DELETE http://localhost:8080/home/delete/1
     @DeleteMapping("/deleteById/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteById(@PathVariable Integer id, WebRequest webRequest) {
@@ -99,10 +97,7 @@ public class Actions {
     public ResponseEntity<ApiResponse> deleteCurrentUser(WebRequest webRequest) {
         String user = actionsService.deleteCurrentUser();
         return authenticationService.logout(user);
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/api/v1/auth/signout")
-//                .buildAndExpand().toUri();
-//        return ResponseEntity.created(location).body(user);
+
     }
 
     @GetMapping("/getAllUsers")
@@ -147,26 +142,35 @@ public class Actions {
 
     }
 
-    @GetMapping("/getAllMessagesSendOfUserId/{id}")
+    @GetMapping("/getAllMessagesSendOfAdminId/{id}")
     @PostAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<MessageDto>> getAllMessagesSendOftUserId(@PathVariable Integer id) {
-        return ResponseEntity.ok().body(actionsService.getAllMessagesSendOftUserId(id));
+        return ResponseEntity.ok().body(actionsService.getAllMessagesSendOftAdminId(id));
 
     }
 
-    @PostMapping("/addAdminIfAllowMessage")
+    //by admin id
+    @GetMapping("/getAllMessagesSendById/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UsersAllowSendingMessageDto>> getAllMessagesSendById(@PathVariable Integer id) {
+        return ResponseEntity.ok(actionsService.getMessageSendSettingsOfAdminId(id));
+
+    }
+    @PostMapping("/addAllowMessage")
     @PostAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> addAdminIfAllowMessage(@Valid @RequestBody UsersAllowSendingMessageDto usersAllowSendingMessageDto) {
         return ResponseEntity.ok().body(new ApiResponse(Instant.now(),actionsService.addAdminIfWantToGetMessages(usersAllowSendingMessageDto),null));
 
     }
 
-    @GetMapping("/getAllMessagesSendById/{id}")
-   // @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UsersAllowSendingMessageDto>> getAllMessagesSendById(@PathVariable Integer id) {
-        return ResponseEntity.ok(actionsService.getMessageSendSettingsOfUserId(id));
+    @PutMapping("/updateAllowMessage")
+    @PostAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> allowGetMessage(@Valid @RequestBody UsersAllowSendingMessageDto usersAllowSendingMessageDto,WebRequest webRequest){
+        actionsService.updateAllowMessageOfAdmin(usersAllowSendingMessageDto);
+        return ResponseEntity.ok().body(new ApiResponse(Instant.now(), actionsService.updateAllowMessageOfAdmin(usersAllowSendingMessageDto), webRequest.getDescription(true)));
 
     }
+
 
 
 

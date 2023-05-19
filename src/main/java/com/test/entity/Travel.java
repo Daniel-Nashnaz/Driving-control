@@ -1,18 +1,31 @@
 package com.test.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.test.dto.TripSummaryDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = "GetTripDetails",
+                procedureName = "GetTripDetails",
+                resultClasses = {TripSummaryDto.class},
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "Date", type = LocalDate.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "UserID", type = Integer.class)
+                }
+        )
+})
 @Table(name = "Travels")
 public class Travel {
     @Id

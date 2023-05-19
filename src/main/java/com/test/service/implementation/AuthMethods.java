@@ -34,17 +34,6 @@ public class AuthMethods {
     @Autowired
     private RoleRepository roleRepository;
 
-    public UserInfoResponse mapperUserVsAdminToDTO(UserVsAdmin user) {
-        UserInfoResponse userInfoResponse = new UserInfoResponse();
-        userInfoResponse.setId(user.getUserID().getId());
-        userInfoResponse.setUsername(user.getUserID().getUserName());
-        userInfoResponse.setEmail(user.getUserID().getEmail());
-        userInfoResponse.setFullName(user.getUserID().getFullName());
-        userInfoResponse.setPhone(user.getUserID().getPhone());
-        List<String> roleNameStream = user.getUserID().getUserVsRoles().stream().map(userVsRole -> userVsRole.getRoleID().getRuleName().toString()).collect(Collectors.toList());
-        userInfoResponse.setRoles(roleNameStream);
-        return userInfoResponse;
-    }
 
     public void setAllPassNotActive(Users userUpdate) {
         userUpdate.getUserPasswords()

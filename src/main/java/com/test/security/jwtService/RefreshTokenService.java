@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    @Value("${bezkoder.app.jwtRefreshExpirationMs}")
+    @Value("${rtdi.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
 
@@ -65,9 +65,10 @@ public class RefreshTokenService {
         return token;
     }
 
+    // if I want to log out from this website ,not all use delete by token!
     @Transactional
     public Integer deleteByUserId(Integer userId) {
-        return refreshTokenRepository.deleteByUserID(userRepository.findById(userId).get());
+        return refreshTokenRepository.deleteAllByUserID(userRepository.findById(userId).get());
     }
 
 

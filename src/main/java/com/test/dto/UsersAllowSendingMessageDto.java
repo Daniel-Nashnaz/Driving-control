@@ -1,5 +1,6 @@
 package com.test.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,8 @@ public class UsersAllowSendingMessageDto implements Serializable {
     private Integer userId;
     @NotNull
     private Integer alertLevel;
+    @NotNull
+    private Boolean reports;
     @NotNull
     private Boolean exceededSpeedLimit;
     @NotNull
