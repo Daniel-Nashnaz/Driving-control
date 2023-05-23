@@ -10,6 +10,7 @@ import com.test.security.jwt.JwtUtils;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.ActionsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,7 @@ public class ActionsServiceImpl implements ActionsService {
     private final AddressRepository addressRepository;
     private final UsersAllowSendingMessageRepository usersAllowSendingMessageRepository;
     private final MessageRepository messageRepository;
+    private final UserPasswordRepository userPasswordRepository;
 
 
     @Override
@@ -42,76 +44,75 @@ public class ActionsServiceImpl implements ActionsService {
 
         UserVsAdmin userVsAdmin = new UserVsAdmin();
 
-        userVsAdmin.setUserID(authMethods.register(registrationDto, RoleName.ROLE_USER));
-
+        Users newUser = authMethods.register(registrationDto, RoleName.ROLE_USER);
+        userVsAdmin.setUserID(newUser);
         userVsAdmin.setAdministratorID(userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get());
-
         userVsAdminRepository.save(userVsAdmin);
 
-        return "User add successfully!";
+        Message message = new Message();
+        message.setUserID(newUser);
+        message.setSubject("Welcome to driving control system!");
+        message.setBody("This is tour userName: " + registrationDto.getUserName() + "\n" +
+                "This is your email: " + registrationDto.getEmail() + "\n" +
+                "This is your password: " + registrationDto.getPassword());
+        messageRepository.save(message);
+        return "User successfully added and account details sent to him!";
     }
 
     @Override
-    public ResponseCookie updateUser(UpdateUser updateUser) {
-        authMethods.isNotExsist(updateUser.getUserName(), updateUser.getEmail());
-        ResponseCookie jwtCookie = null;
+    public ResponseCookie updateUser(UpdateCurrentUserDto updateCurrentUserDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!((UserDetailsImpl) auth.getPrincipal()).getEmail().equals(updateCurrentUserDto.getEmail())){
+        authMethods.isNotExsist(updateCurrentUserDto.getEmail(), updateCurrentUserDto.getEmail());
+        }
+        if(!((UserDetailsImpl) auth.getPrincipal()).getUsername().equals(updateCurrentUserDto.getUsername())){
+            authMethods.isNotExsist(updateCurrentUserDto.getUsername(), updateCurrentUserDto.getUsername());
+        }
         Users userUpdate = userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get();
-        if (updateUser.getFullName() != null) {
-            userUpdate.setFullName(updateUser.getFullName());
-            ((UserDetailsImpl) auth.getPrincipal()).setFullName(updateUser.getFullName());
-        }
-
-        if (updateUser.getPhone() != null) {
-            userUpdate.setPhone(updateUser.getPhone());
-            ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateUser.getEmail());
-        }
-
-        if (updateUser.getEmail() != null && updateUser.getUserName() != null && updateUser.getPassword() != null) {
-            authMethods.getAllPassAndCheckIfUsedBefore(userUpdate, updateUser.getPassword());
-            userUpdate.setEmail(updateUser.getEmail());
-            ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateUser.getEmail());
-            userUpdate.setUserName(updateUser.getUserName());
-            ((UserDetailsImpl) auth.getPrincipal()).setUsername(updateUser.getUserName());
-            String pass = passwordEncoder.encode(updateUser.getPassword());
-            authMethods.setAllPassNotActive(userUpdate);
-            UserPassword userPassword = new UserPassword();
-            userPassword.setPassword(pass);
-            userPassword.setIsActive(true);
-            userPassword.setUserID(userUpdate);
-            userUpdate.setUserPasswords(Collections.singleton(userPassword));
-            ((UserDetailsImpl) auth.getPrincipal()).setPassword(pass);
-            userRepository.save(userUpdate);
-            jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
-            return jwtCookie;
-        }
-        if (updateUser.getEmail() != null) {
-            userUpdate.setEmail(updateUser.getEmail());
-            ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateUser.getEmail());
-            jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
-        }
-        if (updateUser.getUserName() != null) {
-            userUpdate.setUserName(updateUser.getUserName());
-            ((UserDetailsImpl) auth.getPrincipal()).setUsername(updateUser.getUserName());
-            jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
-
-        }
-        if (updateUser.getPassword() != null) {
-            authMethods.getAllPassAndCheckIfUsedBefore(userUpdate, updateUser.getPassword());
-            String pass = passwordEncoder.encode(updateUser.getPassword());
-            authMethods.setAllPassNotActive(userUpdate);
-            UserPassword userPassword = new UserPassword();
-            userPassword.setPassword(pass);
-            userPassword.setIsActive(true);
-            userPassword.setUserID(userUpdate);
-            userUpdate.setUserPasswords(Collections.singleton(userPassword));
-            ((UserDetailsImpl) auth.getPrincipal()).setPassword(pass);
-            jwtCookie = jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
-        }
+        userUpdate.setUserName(updateCurrentUserDto.getUsername());
+        userUpdate.setEmail(updateCurrentUserDto.getEmail());
+        userUpdate.setFullName(updateCurrentUserDto.getFullName());
+        userUpdate.setPhone(updateCurrentUserDto.getPhone());
+        Address addressByUser = addressRepository.getAddressByUserID_Id(userUpdate.getId()).get(0);
+        addressByUser.setAddress(updateCurrentUserDto.getAddress());
+        addressByUser.setApartmentNumber(updateCurrentUserDto.getApartmentNumber());
+        addressByUser.setCity(updateCurrentUserDto.getCity());
+        addressByUser.setCountry(updateCurrentUserDto.getCountry());
+        addressByUser.setUserID(userUpdate);
+        userUpdate.setAddresses(Collections.singletonList(addressByUser));
+        ((UserDetailsImpl) auth.getPrincipal()).setEmail(updateCurrentUserDto.getEmail());
+        ((UserDetailsImpl) auth.getPrincipal()).setUsername(updateCurrentUserDto.getUsername());
+        ((UserDetailsImpl) auth.getPrincipal()).setFullName(updateCurrentUserDto.getFullName());
+        ((UserDetailsImpl) auth.getPrincipal()).setPhone(updateCurrentUserDto.getPhone());
 
         userRepository.save(userUpdate);
-        return jwtCookie;
+        return jwtUtils.generateJwtCookie(((UserDetailsImpl) auth.getPrincipal()));
+
+
     }
+
+    @Override
+    public String updatePasswordOfCurrentUser(UpdatePasswordDto updatePasswordDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(passwordEncoder.matches(updatePasswordDto.getCurrentPassword(),((UserDetailsImpl) auth.getPrincipal()).getPassword())){
+            Users userUpdate = userRepository.findById(((UserDetailsImpl) auth.getPrincipal()).getId()).get();
+            authMethods.getAllPassAndCheckIfUsedBefore(userUpdate, updatePasswordDto.getNewPassword());
+            String pass = passwordEncoder.encode(updatePasswordDto.getNewPassword());
+            authMethods.setAllPassNotActive(userUpdate);
+            UserPassword userPassword = new UserPassword();
+            userPassword.setPassword(pass);
+            userPassword.setIsActive(true);
+            userPassword.setUserID(userUpdate);
+            userUpdate.setUserPasswords(Collections.singleton(userPassword));
+            ((UserDetailsImpl) auth.getPrincipal()).setPassword(pass);
+            userPasswordRepository.save(userPassword);
+            return "Password updated successfully!";
+        }else {
+        return "Current password not match!";
+        }
+
+    }
+
 
 
     public String updateUserById(Integer id, UpdateUser updateUser) {
@@ -155,7 +156,10 @@ public class ActionsServiceImpl implements ActionsService {
 
     @Override
     public List<MessageDto> getAllMessagesSendOfCurrentUser(UserDetailsImpl currentUser) {
-        List<Message> messagesByUserId = messageRepository.getMessagesByUserID_IdAndSentTimeIsNotNull(currentUser.getId());
+        List<Message> messagesByUserId = messageRepository.getRecentMessagesByUserID(
+                currentUser.getId(),
+                PageRequest.of(0, 50)
+        );
         return messagesByUserId.stream().map(message -> ActionsMapper.MessagesToDto(message)).collect(Collectors.toList());
 
     }

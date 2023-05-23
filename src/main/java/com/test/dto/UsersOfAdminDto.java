@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import java.io.Serializable;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,5 +30,9 @@ public class UsersOfAdminDto implements Serializable {
     @Size(max = 20)
     @NotNull
     private String phone;
+
+    @Size(max = 20)
+    @NotNull
+    private Instant timeStart;
 
 }

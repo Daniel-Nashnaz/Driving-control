@@ -3,7 +3,6 @@ package com.test.service;
 import com.test.dto.*;
 import com.test.security.jwtService.UserDetailsImpl;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -11,7 +10,9 @@ public interface ActionsService {
 
     String adminAddUser(RegistrationDto registrationDto);
 
-    ResponseCookie updateUser(UpdateUser updateUser);
+    ResponseCookie updateUser(UpdateCurrentUserDto updateCurrentUserDto);
+
+    String updatePasswordOfCurrentUser(UpdatePasswordDto updatePasswordDto);
 
     String updateUserById(Integer id,UpdateUser updateUser);
 
@@ -20,6 +21,8 @@ public interface ActionsService {
     void deleteById(Integer id);
 
     List<UserInfoResponse> getAllUserOfAdmin();
+
+
 
 
     List<AddressDto> getAddressOfCurrentUser(UserDetailsImpl currentUser);

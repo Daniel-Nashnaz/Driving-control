@@ -1,47 +1,33 @@
 package com.test.controller;
 
 import com.test.dto.*;
-import com.test.entity.Message;
-import com.test.exception.AuthApiException;
-import com.test.repository.MessageRepository;
-import com.test.repository.TravelRepository;
-import com.test.repository.TripStatisticRepository;
 import com.test.repository.UserRepository;
-import com.test.scheduler.MyScheduler;
 import com.test.security.jwtService.CurrentUser;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.implementation.TravelServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-//@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("/api/travel")
 @RequiredArgsConstructor
 public class TravelController {
 
 
     private final TravelServiceImpl travelService;
-    private final TripStatisticRepository tripStatisticRepository;
-    private final TravelRepository travelRepository;
-    private final UserRepository userRepository;
-    private final MessageRepository messageRepository;
+
 
     //first view
     @GetMapping("/getAllUsersByLastTravel")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<UsersOfAdminDto>> getAllLastTravelOfUsersByAdmin(@CurrentUser UserDetailsImpl userDetails) {
         List<UsersOfAdminDto> allUsersByAdmin = travelService.getAllLastTravelOfUsersByAdminId(userDetails);
         return ResponseEntity.ok(allUsersByAdmin);
@@ -64,10 +50,7 @@ public class TravelController {
        return ResponseEntity.ok().body(allInformation);
    }
 
-    @GetMapping("getAllD")
-    public String getTripDetails() {
-    return "";
-    }
+
 
 
 

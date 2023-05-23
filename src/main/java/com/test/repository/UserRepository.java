@@ -23,14 +23,14 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
         @Procedure("SearchEmployee")
         List<Users> searchEmployee(String userName);
 
-    @Query("SELECT new com.test.dto.UsersOfAdminDto(u.id, t.id, u.fullName, u.userName, u.email, u.phone) " +
+    @Query("SELECT new com.test.dto.UsersOfAdminDto(u.id, t.id, u.fullName, u.userName, u.email, u.phone,t.travelStart) " +
             "FROM Users u " +
             "INNER JOIN UserVsAdmin ua ON u.id = ua.userID.id " +
             "INNER JOIN Travel t ON u.id = t.userID.id " +
             "WHERE ua.administratorID.id = ?1 " +
             "AND t.travelStart = (SELECT MAX(t2.travelStart) FROM Travel t2 WHERE t2.userID.id = u.id) " +
             "AND u.isDeleted = false " +
-            "ORDER BY t.travelStart ASC")
+            "ORDER BY t.travelStart DESC ")
     List<UsersOfAdminDto> findTop100UsersOfAdmin(Integer adminId);
 
 

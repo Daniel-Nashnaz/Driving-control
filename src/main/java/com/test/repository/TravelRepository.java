@@ -18,7 +18,7 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
             "INNER JOIN s.tripID t " +
             "INNER JOIN t.userID u " +
             "INNER JOIN t.vehicleID v " +
-            "WHERE u.id = :userId " +
+            "WHERE u.id = :userId AND t.travelEnd IS NOT NULL " +
             "ORDER BY t.id DESC")
     List<TripsOfUserDto> findLatestTripsByUser(@Param("userId") Integer userId);
 
