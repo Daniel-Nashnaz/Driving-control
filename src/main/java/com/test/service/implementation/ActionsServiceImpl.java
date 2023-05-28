@@ -108,12 +108,10 @@ public class ActionsServiceImpl implements ActionsService {
             userPasswordRepository.save(userPassword);
             return "Password updated successfully!";
         }else {
-        return "Current password not match!";
+            throw new AuthApiException(HttpStatus.BAD_REQUEST,"Current password not match!");
         }
 
     }
-
-
 
     public String updateUserById(Integer id, UpdateUser updateUser) {
         authMethods.isNotExsist(updateUser.getUserName(), updateUser.getEmail());

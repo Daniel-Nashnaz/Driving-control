@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/test")
 public class test {
-    @PreAuthorize("permitAll")
+
     @GetMapping("/all")
     public String allAccess() {
         return "Public Content.";
