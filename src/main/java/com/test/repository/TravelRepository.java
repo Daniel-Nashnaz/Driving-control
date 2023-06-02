@@ -57,6 +57,12 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
     @Transactional(readOnly = true )
     List<Object[]> getUserTripAverages(@Param("adminId") int adminId);
 
+   @Query("SELECT COUNT(*) " +
+           "FROM Travel t JOIN UserVsAdmin uva " +
+           "ON t.userID.id = uva.userID.id " +
+           "where uva.administratorID.id = :adminId ")
+    Integer countTripsByAdminId(@Param("adminId") int adminId);
+
 
 
 }

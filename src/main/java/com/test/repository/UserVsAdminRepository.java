@@ -1,6 +1,7 @@
 package com.test.repository;
 
 import com.test.entity.UserVsAdmin;
+import com.test.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,14 @@ public interface UserVsAdminRepository extends JpaRepository<UserVsAdmin, Intege
             "join fetch u.userVsRoles r join fetch r.roleID " +
             " where uva.administratorID.id = :administratorID and u.isDeleted=false")
     List<UserVsAdmin> findUsersByAdministratorId(@Param("administratorID") Integer administratorID);
+
+    @Query("SELECT COUNT(*) " +
+            "FROM Users u INNER JOIN UserVsAdmin uva " +
+            "ON u.id = uva.userID.id " +
+            "where uva.administratorID.id = :administratorID and u.isDeleted=false")
+    Integer countUsersByAdministratorId(@Param("administratorID") Integer administratorID);
+
+
 
 
 }
