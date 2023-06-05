@@ -1,12 +1,13 @@
 package com.test.service;
 
-import com.test.dto.UserTripAverageDto;
 import com.test.security.jwtService.UserDetailsImpl;
-
-import java.util.List;
 
 public interface StatisticService {
 
 
-    List<UserTripAverageDto> getAllScoresOfUsers(UserDetailsImpl userDetails);
+    String getAllData(UserDetailsImpl userDetails);
+
+
+
+    String getAllStatistic(UserDetailsImpl userDetails, Integer userId);
 }

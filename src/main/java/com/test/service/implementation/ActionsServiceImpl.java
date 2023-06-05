@@ -52,8 +52,8 @@ public class ActionsServiceImpl implements ActionsService {
         Message message = new Message();
         message.setUserID(newUser);
         message.setSubject("Welcome to driving control system!");
-        message.setBody("This is tour userName: " + registrationDto.getUserName() + "\n" +
-                "This is your email: " + registrationDto.getEmail() + "\n" +
+        message.setBody("This is your userName: " + registrationDto.getUserName() + "<br>" +
+                "This is your email: " + registrationDto.getEmail() + "<br>" +
                 "This is your password: " + registrationDto.getPassword());
         messageRepository.save(message);
         return "User successfully added and account details sent to him!";

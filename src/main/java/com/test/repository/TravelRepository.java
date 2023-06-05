@@ -22,8 +22,7 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
             "ORDER BY t.id DESC")
     List<TripsOfUserDto> findLatestTripsByUser(@Param("userId") Integer userId);
 
-    @Query(value = "EXEC GetTripDetails @Date = :date, @UserID = :userId", nativeQuery = true)
-    List<TripSummaryDto> getTripDetails(@Param("date") LocalDateTime date, @Param("userId") int userId);
+
     @Query("SELECT NEW com.test.dto.TripSummaryDto(" +
             "ts.tripID.id, " +
             "ts.duration, " +
@@ -62,6 +61,8 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
            "ON t.userID.id = uva.userID.id " +
            "where uva.administratorID.id = :adminId ")
     Integer countTripsByAdminId(@Param("adminId") int adminId);
+
+   Integer countByUserID_Id(Integer userID);
 
 
 

@@ -45,7 +45,7 @@ public class AllStatisticsDTO {
     private Integer numForwardWarningDirectionsLeft;
     @NotNull
     private Integer numForwardWarningDirectionsRight;
-    private Double tripScore;
+    private Double averageTripScore;
 
 
 }

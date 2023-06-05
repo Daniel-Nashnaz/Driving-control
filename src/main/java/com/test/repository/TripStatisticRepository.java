@@ -4,7 +4,9 @@ import com.test.dto.AllStatisticsDTO;
 import com.test.entity.TripStatistic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,5 +20,9 @@ public interface TripStatisticRepository extends JpaRepository<TripStatistic, In
             "ms.numForwardWarningDirectionsLeft, ms.numForwardWarningDirectionsRight, ms.tripScore) " +
             "FROM TripStatistic ts JOIN MoreInfoAboutStatistic ms ON ts.tripID.id = ms.tripID.id WHERE ts.tripID.id =:tripId")
     Optional<AllStatisticsDTO> findAllWithMoreInfo(@Param("tripId") Integer tripId);
+
+    @Procedure(procedureName = "[dbo].[GetLast10TripsStatisticsOfUserId]")
+    @Transactional(readOnly = true )
+    List<Object[]> getAllStatisticOfUserId(@Param("userId") int userId);
 
 }
