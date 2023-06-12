@@ -14,8 +14,8 @@ import java.util.Optional;
 public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
     @Query("SELECT d FROM Driver d  JOIN FETCH d.userID u  JOIN FETCH d.vehicleID v " +
-            "WHERE d.vehicleID.id = :vehicleID and v.isDeleted = false")
-    List<Driver> findUsersByVehicleID(@Param("vehicleID") Integer vehicleID);
+            "WHERE d.vehicleID.id = :vehicleID and v.isDeleted = false and v.carAdministrator.id = :adminID")
+    List<Driver> findUsersByVehicleID(@Param("vehicleID") Integer vehicleID,@Param("adminID") Integer adminID);
 
     boolean existsDriverByVehicleIDAndUserID(Vehicle vehicle , Users user);
 

@@ -200,6 +200,7 @@ public class ActionsServiceImpl implements ActionsService {
             usersAllowSendingMessage = usersAllowSendingMessageRepository.getUsersAllowSendingMessageByUserID_Id((usersAllowSendingMessageDto.getUserId())).get(0);
         }
         usersAllowSendingMessage.setAlertLevel(usersAllowSendingMessageDto.getAlertLevel());
+        usersAllowSendingMessage.setReports(usersAllowSendingMessageDto.getReports());
         usersAllowSendingMessage.setForwardDirections(usersAllowSendingMessageDto.getForwardDirections());
         usersAllowSendingMessage.setLaneDeparture(usersAllowSendingMessageDto.getLaneDeparture());
         usersAllowSendingMessage.setSuddenBraking(usersAllowSendingMessageDto.getSuddenBraking());

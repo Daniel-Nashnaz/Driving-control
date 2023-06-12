@@ -22,6 +22,13 @@ public interface UserVsAdminRepository extends JpaRepository<UserVsAdmin, Intege
     Integer countUsersByAdministratorId(@Param("administratorID") Integer administratorID);
 
 
+    @Query("SELECT uva.administratorID.id FROM UserVsAdmin uva " +
+            "JOIN Users u ON uva.userID.id = u.id " +
+            "WHERE uva.userID.id = :userId")
+    Integer getAdministratorIdForUser(@Param("userId") int userId);
+
+
+
 
 
 }

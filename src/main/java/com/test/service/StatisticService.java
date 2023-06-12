@@ -9,5 +9,7 @@ public interface StatisticService {
 
 
 
-    String getAllStatistic(UserDetailsImpl userDetails, Integer userId);
+    String getAllStatistic(Integer userId);
+
+    String getAllScoresOfUser(Integer userId);
 }

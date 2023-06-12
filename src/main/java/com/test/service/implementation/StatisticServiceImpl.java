@@ -1,5 +1,6 @@
 package com.test.service.implementation;
 
+import com.test.dto.AllScoresOfUserDto;
 import com.test.dto.StatisticsOfUserDto;
 import com.test.dto.UserTripAverageDto;
 import com.test.mapper.StatisticMapper;
@@ -20,9 +21,7 @@ import static com.test.service.implementation.ConstantsOfReport.*;
 public class StatisticServiceImpl implements StatisticService {
 
     private final TravelRepository travelRepository;
-
     private final ActionsServiceImpl actionsService;
-
     private final MoreInfoAboutStatisticRepository moreInfoAboutStatisticRepository;
     private final UserVsAdminRepository userVsAdminRepository;
     private final VehicleRepository vehicleRepository;
@@ -42,14 +41,23 @@ public class StatisticServiceImpl implements StatisticService {
 
 
     @Override
-    public String getAllStatistic(UserDetailsImpl userDetails, Integer userId) {
+    public String getAllStatistic(Integer userId) {
 
         JSONObject jsonObject = new JSONObject();
+        Integer administratorIdForUser = userVsAdminRepository.getAdministratorIdForUser(userId);
         List<StatisticsOfUserDto> allStatistic = getAllStatisticOfUserId(userId);
         jsonObject.putOnce("allStatistic", allStatistic);
         jsonObject.put("report", createReport(allStatistic.get(0)));
         jsonObject.put("countTrips", travelRepository.countByUserID_Id(userId));
-        jsonObject.put("level", actionsService.getMessageSendSettingsOfAdminId(userDetails.getId()));
+        jsonObject.put("level", actionsService.getMessageSendSettingsOfAdminId(administratorIdForUser));
+        return jsonObject.toString();
+
+    }
+
+    @Override
+    public String getAllScoresOfUser(Integer userId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.putOnce("allScores", getAllScoresOfUserId(userId));
         return jsonObject.toString();
 
     }
@@ -62,6 +70,11 @@ public class StatisticServiceImpl implements StatisticService {
     public List<StatisticsOfUserDto> getAllStatisticOfUserId(int userId) {
         List<Object[]> allStatisticOfUserId = tripStatisticRepository.getAllStatisticOfUserId(userId);
         return StatisticMapper.mapToStatisticOfUser(allStatisticOfUserId);
+    }
+
+    public List<AllScoresOfUserDto> getAllScoresOfUserId(int userId) {
+        List<Object[]> allScoresOfUser = moreInfoAboutStatisticRepository.getAllScoresOfUserId(userId);
+        return StatisticMapper.mapToScoresOfUser(allScoresOfUser);
     }
 
     public StringBuilder createReport(StatisticsOfUserDto statisticsOfUser) {

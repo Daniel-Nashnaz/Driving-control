@@ -20,5 +20,6 @@ public interface VehicleService {
 
     String addDriverToVehicle(AddDriverDto addDriverDto);
 
-    ResponseEntity<?> allUserByVehicleId(Integer vehicleId);
+
+    ResponseEntity<?> allUserByVehicleId(UserDetailsImpl currentUser, Integer vehicleId);
 }

@@ -26,7 +26,7 @@ public class StatisticController {
     @GetMapping("/allStatisticOfUser/{userId}")
     @Transactional
     public ResponseEntity<String> allScores(@PathVariable Integer userId,@CurrentUser UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(statisticService.getAllStatistic(userDetails,userId));
+        return ResponseEntity.ok(statisticService.getAllStatistic(userId));
     }
 
     // ret all data to main dashboard!
@@ -35,5 +35,11 @@ public class StatisticController {
     public ResponseEntity<String> getData(@CurrentUser UserDetailsImpl userDetails) {
 
         return ResponseEntity.ok(statisticService.getAllData(userDetails));
+    }
+
+    @GetMapping("/allScoreOfUser/{userId}")
+    @Transactional
+    public ResponseEntity<String> allScores(@PathVariable Integer userId) {
+        return ResponseEntity.ok(statisticService.getAllScoresOfUser(userId));
     }
 }

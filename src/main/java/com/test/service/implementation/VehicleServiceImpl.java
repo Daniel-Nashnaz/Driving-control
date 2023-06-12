@@ -4,7 +4,6 @@ import com.test.dto.AddDriverDto;
 import com.test.dto.DriversDto;
 import com.test.dto.VehicleDto;
 import com.test.entity.Driver;
-import com.test.entity.UserVsAdmin;
 import com.test.entity.Users;
 import com.test.entity.Vehicle;
 import com.test.exception.AuthApiException;
@@ -87,8 +86,8 @@ public class VehicleServiceImpl implements VehicleService {
 
 
     @Override
-    public ResponseEntity<?> allUserByVehicleId(Integer vehicleId) {
-        List<Driver> usersByVehicleID = driverRepository.findUsersByVehicleID(vehicleId);
+    public ResponseEntity<?> allUserByVehicleId(UserDetailsImpl currentUser, Integer vehicleId) {
+        List<Driver> usersByVehicleID = driverRepository.findUsersByVehicleID(currentUser.getId(),vehicleId);
         List<DriversDto> collect = usersByVehicleID.stream().map(Driver::getUserID).map(VehicleMapper::userOfDriverToDto).collect(Collectors.toList());
         return ResponseEntity.ok(collect);
     }
