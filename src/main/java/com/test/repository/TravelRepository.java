@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 public interface TravelRepository extends JpaRepository<Travel, Integer> {
     @Query("SELECT new com.test.dto.TripsOfUserDto(t.id, t.userID.id, t.vehicleID.id, t.travelStart, t.travelEnd, v.typeOfVehicle, v.vehicleName, v.vehicleNumber, s.tripScore) " +

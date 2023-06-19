@@ -1,7 +1,7 @@
 package com.test.controller;
 
-import com.test.dto.ApiResponse;
 import com.test.dto.AddDriverDto;
+import com.test.dto.ApiResponse;
 import com.test.dto.VehicleDto;
 import com.test.security.jwtService.CurrentUser;
 import com.test.security.jwtService.UserDetailsImpl;
@@ -40,7 +40,7 @@ public class VehicleController {
 
 
     @PutMapping("/updateVehicle/{id}")
-    public ResponseEntity<VehicleDto> updateVehicleById(@PathVariable Integer id, @Valid @RequestBody  VehicleDto vehicleDto) {
+    public ResponseEntity<VehicleDto> updateVehicleById(@PathVariable Integer id, @Valid @RequestBody VehicleDto vehicleDto) {
         VehicleDto vehicleUpdated = vehicleService.updateVehicleByID(id, vehicleDto);
         return ResponseEntity.ok().body(vehicleUpdated);
     }
@@ -59,8 +59,8 @@ public class VehicleController {
     }
 
     @GetMapping("allUserOfVehicle/{vehicleId}")
-    public ResponseEntity<?> allUserOfVehicle( @CurrentUser UserDetailsImpl currentUser,@PathVariable Integer vehicleId){
-        return vehicleService.allUserByVehicleId(currentUser,vehicleId);
+    public ResponseEntity<?> allUserOfVehicle(@CurrentUser UserDetailsImpl currentUser, @PathVariable Integer vehicleId) {
+        return vehicleService.allUserByVehicleId(currentUser, vehicleId);
     }
 
 

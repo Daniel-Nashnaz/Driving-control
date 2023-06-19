@@ -1,7 +1,9 @@
 package com.test.controller;
 
-import com.test.dto.*;
-import com.test.repository.UserRepository;
+import com.test.dto.AllStatisticsDTO;
+import com.test.dto.RealTimeInformationDto;
+import com.test.dto.TripsOfUserDto;
+import com.test.dto.UsersOfAdminDto;
 import com.test.security.jwtService.CurrentUser;
 import com.test.security.jwtService.UserDetailsImpl;
 import com.test.service.implementation.TravelServiceImpl;
@@ -32,29 +34,26 @@ public class TravelController {
         List<UsersOfAdminDto> allUsersByAdmin = travelService.getAllLastTravelOfUsersByAdminId(userDetails);
         return ResponseEntity.ok(allUsersByAdmin);
     }
+
     //after click on user... show this
     @GetMapping("/getLastTripsByUser/{id}")
     public ResponseEntity<List<TripsOfUserDto>> getLastTripsByUser(@PathVariable Integer id) {
         List<TripsOfUserDto> lastTripsByUser = travelService.getLastTripsByUserId(id);
         return ResponseEntity.ok(lastTripsByUser);
     }
+
     //after click on trip statistic show this
     @GetMapping("getStatisticsOfTripId/{tripId}")
     public ResponseEntity<Optional<AllStatisticsDTO>> getStatisticsOfTripById(@PathVariable Integer tripId) {
         return ResponseEntity.ok().body(travelService.getStatisticsOfTripId(tripId));
     }
+
     //after click on trip info show this
-   @GetMapping("getAllDataAboutTripId/{tripId}")
-   public ResponseEntity<List<RealTimeInformationDto>> getAllDataOfTripById(@PathVariable Integer tripId) {
-       List<RealTimeInformationDto> allInformation = travelService.getAllDataOfTripId(tripId);
-       return ResponseEntity.ok().body(allInformation);
-   }
-
-
-
-
-
-
+    @GetMapping("getAllDataAboutTripId/{tripId}")
+    public ResponseEntity<List<RealTimeInformationDto>> getAllDataOfTripById(@PathVariable Integer tripId) {
+        List<RealTimeInformationDto> allInformation = travelService.getAllDataOfTripId(tripId);
+        return ResponseEntity.ok().body(allInformation);
+    }
 
 
 }

@@ -1,8 +1,6 @@
 package com.test.repository;
 
-import com.test.dto.AddressDto;
 import com.test.entity.Address;
-import org.springframework.data.geo.GeoResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

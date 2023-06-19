@@ -1,13 +1,11 @@
 package com.test.repository;
 
 import com.test.entity.UserVsAdmin;
-import com.test.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserVsAdminRepository extends JpaRepository<UserVsAdmin, Integer> {
     @Query("SELECT uva FROM UserVsAdmin uva join fetch uva.userID u " +

@@ -7,7 +7,6 @@ import com.test.dto.UserInfoResponse;
 import com.test.entity.RefreshToken;
 import com.test.entity.RoleName;
 import com.test.exception.TokenRefreshException;
-import com.test.repository.*;
 import com.test.security.jwt.JwtUtils;
 import com.test.security.jwtService.RefreshTokenService;
 import com.test.security.jwtService.UserDetailsImpl;
@@ -23,9 +22,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

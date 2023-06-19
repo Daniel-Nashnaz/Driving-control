@@ -5,7 +5,6 @@ import com.test.dto.StatisticsOfUserDto;
 import com.test.dto.UserTripAverageDto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
