@@ -1,6 +1,14 @@
-# Driving-control
-![image](https://github.com/Daniel-Nashnaz/Driving-control/assets/96833432/a05ffd85-1cb8-42d1-a65c-3a022770c369)
+# Driving Control - Spring Boot API
 
-The real-time driving control system was developed in response to growing concerns about transportation safety. Many accidents on the road are caused by reckless driving, and there is a need for a system that can help prevent these accidents. The system is designed to collect real-time data on drivers' driving behavior and provide alerts if they are not driving safely. This data is then stored in a database, allowing parents and managers to access it at any time and see all their trip data. Such a system is important for several reasons. First, it allows parents to monitor their children's driving behavior and ensure that they drive safely. This is especially important for new drivers who may be more accident prone. Second, it allows transportation company managers to monitor the driving behavior of their drivers and ensure that they follow safety protocols. This can help prevent accidents and improve the overall safety of the transportation system. Finally, such a system can help improve transportation safety by providing real-time alerts and warnings when unsafe driving behavior is detected. This can help prevent accidents before they happen and save lives on the road. Overall, the real-time driving control system is an important tool for improving transportation safety and ensuring drivers drive safely. By collecting real-time data on driving behavior and providing alerts and warnings when unsafe behavior is detected, the system can help prevent accidents and save lives on the road.
+This backend service is the core of the Driving Control system, designed to improve transportation safety by monitoring and analyzing drivers' behavior in real time.
 
+The system collects driving data such as speed, braking, acceleration, and alerts for unsafe driving patterns. This information is securely stored in a database, allowing parents and fleet managers to review driving history and ensure compliance with safety standards.
+
+By providing real-time alerts and detailed trip reports, the system helps prevent accidents and promotes responsible driving habits. It is especially valuable for parents monitoring young drivers and transportation companies overseeing professional drivers.
+
+This service includes user registration and authentication with JWT, driver and vehicle management, trip data handling, and report generation. Data is stored using MongoDB for trip information and SQL databases for user and system management.
+
+Overall, the Driving Control API is a vital tool for enhancing road safety through technology, helping reduce accidents and saving lives by encouraging safer driving behavior.
+
+📚 Full system overview: [Driving Control System](https://github.com/Daniel-Nashnaz/driving-control-system)
 
